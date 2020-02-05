@@ -1,0 +1,2 @@
+sp/level01.bombermap
+sp/level02.bombermap
