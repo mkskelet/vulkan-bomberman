@@ -19,7 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Color.cpp" />
+    <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SplashScreen.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="GameTime.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SplashScreen.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -14,7 +14,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-#include <chrono>
+//#include <chrono>
 #include <iostream>
 #include <stdexcept>
 #include <functional>
@@ -26,6 +26,10 @@
 #include <algorithm>
 #include <fstream>
 #include <array>
+
+#include "GameTime.h"
+#include "Scene.h"
+#include "SplashScreen.h"
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -311,13 +315,12 @@ private:
 		createDepthResources();
 		createFramebuffers();
 		//createTextureImage(TEXTURE_PATH.c_str(), &textureImage, &textureImageMemory, true, &mipLevels);
-		createTextureImage("../textures/texture.jpg", &textureImage, &textureImageMemory, true, &textureMipLevels);
-		createTextureImage("../textures/texture1.jpg", &backgroundImage, &backgroundImageMemory, true, &backgroundMipLevels);
-		createTextureImageView(&textureImageView, &textureImage);
-		createTextureImageView(&backgroundImageView, &backgroundImage);
-		createTextureSampler(&textureSampler, textureMipLevels);
-		createTextureSampler(&backgroundSampler, backgroundMipLevels);
-		//loadModel();
+		//createTextureImage("../textures/texture.jpg", &textureImage, &textureImageMemory, true, &textureMipLevels);
+		//createTextureImage("../textures/texture1.jpg", &backgroundImage, &backgroundImageMemory, true, &backgroundMipLevels);
+		//createTextureImageView(&textureImageView, &textureImage);
+		//createTextureImageView(&backgroundImageView, &backgroundImage);
+		//createTextureSampler(&textureSampler, textureMipLevels);
+		//createTextureSampler(&backgroundSampler, backgroundMipLevels);
 		renderQuad();
 		createVertexBuffer();
 		createIndexBuffer();
@@ -920,7 +923,7 @@ private:
 		// load shaders
 		auto vertShaderCode = readFile("../shaders/vert.spv");
 
-		const char* fragShaderName = index == 1 ? "../shaders/frag1.spv" : "../shaders/frag.spv";
+		const char* fragShaderName = "../shaders/frag.spv";
 		auto fragShaderCode = readFile(fragShaderName);
 
 		VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
@@ -1815,14 +1818,14 @@ private:
 			// bind buffers
 			VkBuffer vertexBuffers[] = { vertexBuffer };
 			VkDeviceSize offsets[] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+			/*vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
 			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() / 2), 1, 0, 0, 0);
 
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets1[i], 0, nullptr);
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline1);
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() / 2), 1, 6, 0, 0);
+			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() / 2), 1, 6, 0, 0);*/
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -1901,12 +1904,12 @@ private:
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 
-			VkDescriptorImageInfo imageInfo = {};
+			/*VkDescriptorImageInfo imageInfo = {};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			imageInfo.imageView = *image;
-			imageInfo.sampler = *sampler;
+			imageInfo.sampler = *sampler;*/
 
-			std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+			std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = (*descriptorSets)[i];
@@ -1916,13 +1919,13 @@ private:
 			descriptorWrites[0].descriptorCount = 1;
 			descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-			descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			/*descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[1].dstSet = (*descriptorSets)[i];
 			descriptorWrites[1].dstBinding = 1;
 			descriptorWrites[1].dstArrayElement = 0;
 			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 			descriptorWrites[1].descriptorCount = 1;
-			descriptorWrites[1].pImageInfo = &imageInfo;
+			descriptorWrites[1].pImageInfo = &imageInfo;*/
 
 			vkUpdateDescriptorSets(device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
@@ -1976,10 +1979,16 @@ private:
 
 	void mainLoop()
 	{
+		GameTime gameTime = GameTime(std::chrono::high_resolution_clock::now());
+		glfwSetKeyCallback(window, keyCallback);
+		Scene* scene = new SplashScreen();
+		scene->Start();
+
 		while (!glfwWindowShouldClose(window))
 		{
+			gameTime.UpdateTime(std::chrono::high_resolution_clock::now());
+			scene->Update();
 			glfwPollEvents();
-			glfwSetKeyCallback(window, keyCallback);
 			drawFrame();
 		}
 
@@ -2156,6 +2165,7 @@ private:
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
 		auto currentTime = std::chrono::high_resolution_clock::now();
+		//float f = std::chrono::time_point_cast<float>(currentTime);
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo = {};
