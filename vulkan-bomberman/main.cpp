@@ -202,10 +202,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	moveView(x, y, z);
 }
 
-class VulkanCore
+class VulkanApp
 {
 public:
-	static VulkanCore* Instance;
+	static VulkanApp* Instance;
 	VkDevice device;
 
 	void run()
@@ -527,7 +527,7 @@ private:
 
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
 	{
-		auto app = reinterpret_cast<VulkanCore*>(glfwGetWindowUserPointer(window));
+		auto app = reinterpret_cast<VulkanApp*>(glfwGetWindowUserPointer(window));
 		app->framebufferResized = true;
 	}
 
@@ -2212,7 +2212,7 @@ private:
 
 int main()
 {
-	VulkanCore app;
+	VulkanApp app;
 
 	try
 	{
