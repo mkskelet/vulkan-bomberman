@@ -2,19 +2,19 @@
 //#include "tga.h"
 
 /// Constructor to create sprite with specified position, scale and textureID, default pivot PIVOT_CENTER is used.
-Sprite::Sprite(glm::vec3 position, glm::vec2 scale, int textureID) {
+Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture) {
 	this->position = position;
 	this->scale = scale;
-	this->textureID = textureID;
+	this->texture = texture;
 	spritePivot = PIVOT_TOPLEFT;
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 /// Constructor to create sprite with specified position, scale and textureID and pivot.
-Sprite::Sprite(glm::vec3 position, glm::vec2 scale, int textureID, int spritePivot) {
+Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, int spritePivot) {
 	this->position = position;
 	this->scale = scale;
-	this->textureID = textureID;
+	this->texture = texture;
 	SetSpritePivot(spritePivot);
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
