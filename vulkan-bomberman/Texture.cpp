@@ -1,9 +1,8 @@
 #include "Texture.h"
-#include "main.cpp"
 
 Texture::Texture(const char* path)
 {
-	VulkanRenderer* renderer = VulkanRenderer::Instance;
+	VulkanCore* renderer = VulkanCore::Instance;
 
 	textureMipLevels = 1;
 	renderer->createTextureImage(path, &textureImage, &textureImageMemory);
@@ -15,7 +14,7 @@ Texture::Texture(const char* path)
 
 Texture::~Texture()
 {
-	VulkanRenderer* renderer = VulkanRenderer::Instance;
+	VulkanCore* renderer = VulkanCore::Instance;
 
 	vkDestroySampler(renderer->device, textureSampler, nullptr);
 	vkDestroyImageView(renderer->device, textureImageView, nullptr);

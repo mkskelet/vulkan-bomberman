@@ -10,8 +10,12 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#ifndef INGLUDE_GLM
+#define INCLUDE_GLM
+#include <glm/glm.hpp>
+#endif
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
@@ -198,10 +202,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	moveView(x, y, z);
 }
 
-class VulkanRenderer
+class VulkanCore
 {
 public:
-	static VulkanRenderer* Instance;
+	static VulkanCore* Instance;
 	VkDevice device;
 
 	void run()
@@ -523,7 +527,7 @@ private:
 
 	static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
 	{
-		auto app = reinterpret_cast<VulkanRenderer*>(glfwGetWindowUserPointer(window));
+		auto app = reinterpret_cast<VulkanCore*>(glfwGetWindowUserPointer(window));
 		app->framebufferResized = true;
 	}
 
@@ -2010,6 +2014,8 @@ private:
 			drawFrame();
 		}
 
+		texDB.ReleaseTextures();
+
 		delete scene;
 		delete &texDB;
 
@@ -2206,7 +2212,7 @@ private:
 
 int main()
 {
-	VulkanRenderer app;
+	VulkanCore app;
 
 	try
 	{

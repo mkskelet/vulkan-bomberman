@@ -1,6 +1,6 @@
 #include "TextureDatabase.h"
 
-TextureDatabase::~TextureDatabase()
+void TextureDatabase::ReleaseTextures()
 {
 	for (auto const& [path, tex] : textures)
 	{
@@ -20,5 +20,12 @@ Texture* TextureDatabase::GetTexture(const char* path)
 	{
 		Texture* t = new Texture(path);
 		textures[path] = t;
+		return t;
 	}
+}
+
+TextureDatabase& TextureDatabase::GetInstance()
+{
+	static TextureDatabase instance;
+	return instance;
 }

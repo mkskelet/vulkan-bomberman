@@ -6,7 +6,7 @@
 class SplashScreen : public Scene
 {
 private:
-	long timer;			///< Time before switching scene.
+	float timer;			///< Time before switching scene.
 	Sprite background;		///< Background sprite.
 	Sprite madeBy;
 public:

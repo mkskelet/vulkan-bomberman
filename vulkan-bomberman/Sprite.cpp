@@ -1,5 +1,4 @@
 #include "Sprite.h"
-//#include "tga.h"
 
 /// Constructor to create sprite with specified position, scale and textureID, default pivot PIVOT_CENTER is used.
 Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture) {

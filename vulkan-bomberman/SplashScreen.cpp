@@ -1,6 +1,8 @@
-#include "SplashScreen.h"
 #include "GameTime.h"
+#include "TextureDatabase.h"
 #include <iostream>
+
+#include "SplashScreen.h"
 
 /// Constructor for main menu scene, sets player count and ai count to lowest needed for the game to start.
 SplashScreen::SplashScreen() : Scene(SCENE_SPLASHSCREEN)
@@ -62,6 +64,6 @@ void SplashScreen::SpecialKeyPress(int key)
 /// Method called after window has been resized
 void SplashScreen::OnWindowResized()
 {
-	background = Sprite(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f), -1, PIVOT_CENTER);
-	//background.SetTexture(TextureDatabase.GetTexture("../sprites/splashscreen.tga"));
+	background = Sprite(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f), nullptr, PIVOT_CENTER);
+	background.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga"));
 }

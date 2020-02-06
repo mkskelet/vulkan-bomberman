@@ -11,7 +11,8 @@ private:
 
 public:
 	TextureDatabase() : textures({}) {};
-	~TextureDatabase();
+	void ReleaseTextures();
 	Texture* GetTexture(const char* path);
+	static TextureDatabase& GetInstance();
 };
 

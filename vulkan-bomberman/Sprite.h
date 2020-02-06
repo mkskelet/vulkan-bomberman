@@ -1,6 +1,10 @@
 #pragma once
 
+#ifndef INGLUDE_GLM
+#define INCLUDE_GLM
 #include <glm/glm.hpp>
+#endif
+
 #include "Color.h"
 #include "Texture.h"
 
@@ -18,8 +22,8 @@ private:
 
 public:
 	Sprite() : position(glm::vec3(0, 0, 0)), texture(nullptr), spritePivot(PIVOT_TOPLEFT), color({1.0f, 1.0f, 1.0f , 1.0f }) {};
-	Sprite(glm::vec3 position, glm::vec2 scale, Texture* textureID);
-	Sprite(glm::vec3 position, glm::vec2 scale, Texture* textureID, int spritePivot);
+	Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture);
+	Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, int spritePivot);
 	~Sprite();
 	void SetPosition(glm::vec3 position) { this->position = position; }
 	void SetScale(glm::vec2 scale) { this->scale = scale; }
