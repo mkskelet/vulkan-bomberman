@@ -8,10 +8,11 @@ private:
 	uint32_t textureMipLevels;
 	VkImage textureImage;
 	VkDeviceMemory textureImageMemory;
+	
+public:
 	VkImageView textureImageView;
 	VkSampler textureSampler;
 
-public:
 	Texture(const char* path);
 	~Texture();
 };

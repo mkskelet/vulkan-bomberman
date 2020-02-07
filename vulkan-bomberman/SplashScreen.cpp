@@ -67,3 +67,8 @@ void SplashScreen::OnWindowResized()
 	background = Sprite(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f), nullptr, PIVOT_CENTER);
 	background.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga"));
 }
+
+Texture* SplashScreen::GetSprite()
+{
+	return background.GetTexture();
+}

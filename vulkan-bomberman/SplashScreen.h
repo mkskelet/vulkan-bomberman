@@ -17,5 +17,6 @@ public:
 	void KeyPress(unsigned char key);
 	void SpecialKeyPress(int key);
 	void OnWindowResized();
+	Texture* GetSprite();
 };
 
