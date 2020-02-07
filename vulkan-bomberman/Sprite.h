@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef INGLUDE_GLM
-#define INCLUDE_GLM
-#include <glm/glm.hpp>
-#endif
-
 #include "Color.h"
 #include "Texture.h"
 

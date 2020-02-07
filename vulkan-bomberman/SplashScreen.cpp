@@ -1,8 +1,8 @@
+#include "SplashScreen.h"
+
 #include "GameTime.h"
 #include "TextureDatabase.h"
 #include <iostream>
-
-#include "SplashScreen.h"
 
 /// Constructor for main menu scene, sets player count and ai count to lowest needed for the game to start.
 SplashScreen::SplashScreen() : Scene(SCENE_SPLASHSCREEN)
