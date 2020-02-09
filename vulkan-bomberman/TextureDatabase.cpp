@@ -8,6 +8,19 @@ void TextureDatabase::ReleaseTextures()
 	}
 }
 
+void TextureDatabase::ReleaseTexture(Texture* texture)
+{
+	for (auto const& [path, tex] : textures)
+	{
+		if (tex == texture)
+		{
+			delete tex;
+			textures.erase(path);
+			break;
+		}
+	}
+}
+
 Texture* TextureDatabase::GetTexture(const char* path)
 {
 	auto i = textures.find(path);

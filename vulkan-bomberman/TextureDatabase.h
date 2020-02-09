@@ -12,6 +12,7 @@ private:
 public:
 	TextureDatabase() : textures({}) {};
 	void ReleaseTextures();
+	void ReleaseTexture(Texture* texture);
 	Texture* GetTexture(const char* path);
 	static TextureDatabase& GetInstance();
 };

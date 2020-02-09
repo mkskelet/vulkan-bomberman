@@ -1254,8 +1254,29 @@ private:
 			{
 				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 				vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
-				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+
+				int pendingIndex = 0;
+				Texture* pendingTexture = nullptr;
+
+				for (auto const& [index, tex] : spriteTextureMap)
+				{
+					if (pendingTexture != nullptr)
+					{
+						UpdateDescriptorSets(&descriptorSets, &pendingTexture->textureImageView, &pendingTexture->textureSampler);
+						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+						vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(index - pendingIndex), 1, pendingIndex, 0, 0);
+					}
+
+					pendingIndex = index;
+					pendingTexture = tex;
+				}
+
+				if (pendingTexture != nullptr)
+				{
+					UpdateDescriptorSets(&descriptorSets, &pendingTexture->textureImageView, &pendingTexture->textureSampler);
+					vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+					vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() - pendingIndex), 1, pendingIndex, 0, 0);
+				}
 			}
 
 			vkCmdEndRenderPass(commandBuffers[i]);
@@ -1418,6 +1439,8 @@ private:
 		return buffer;
 	}
 
+	std::map<int, Texture*> spriteTextureMap;
+
 	void mainLoop()
 	{
 		GameTime gameTime = GameTime(std::chrono::high_resolution_clock::now());
@@ -1444,11 +1467,13 @@ private:
 			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
 			// pre render
-			DrawSingleSprite(scene->GetSprite());
+			spriteTextureMap.clear();
+			DrawAllSprites(spriteTextureMap);
+			//DrawSingleSprite(scene->GetSprite());
 
 			createVertexBuffer();
 			createIndexBuffer();
-			UpdateDescriptorSets(&descriptorSets, &(scene->GetTexture()->textureImageView), &(scene->GetTexture()->textureSampler));			
+			//UpdateDescriptorSets(&descriptorSets, &(scene->GetTexture()->textureImageView), &(scene->GetTexture()->textureSampler));			
 
 			createCommandBuffers(true);
 
@@ -1465,10 +1490,25 @@ private:
 		delete scene;
 	}
 
-	void DrawSingleSprite(Sprite * sprite)
+	void DrawAllSprites(std::map<int, Texture*>& map)
 	{
-		vertices.resize(4);
+		vertices.resize(0);
+		indices.resize(0);
 
+		for (auto const& [tex, sprites] : Sprite::GetSpriteMap())
+		{
+			map[indices.size()] = tex;
+			for (auto const& it : sprites)
+			{
+				RenderSprite(it);
+			}
+		}
+
+		std::cout << vertices.size() << " " << indices.size();
+	}
+
+	void RenderSprite(Sprite * sprite)
+	{
 		glm::vec3 position = sprite->GetPosition();
 		glm::vec2 pivot = sprite->GetPivot();
 		glm::vec2 scale = sprite->GetScale();
@@ -1482,18 +1522,19 @@ private:
 		float tilingY1 = tiling.y >= 0 ? 0.0f : abs(tiling.y);
 		float tilingY2 = tiling.y >= 0 ? tiling.y : 0.0f;
 
-		vertices[0] = { { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY1 } };
-		vertices[1] = { { position.x + (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } };
-		vertices[2] = { { position.x + (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } };
-		vertices[3] = { { position.x - (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } };
+		int firstIndex = vertices.size();
 
-		indices.resize(6);
-		indices[0] = 0;
-		indices[1] = 1;
-		indices[2] = 2;
-		indices[3] = 2;
-		indices[4] = 3;
-		indices[5] = 0;
+		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY1 } });
+		vertices.push_back({ { position.x + (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } });
+		vertices.push_back({ { position.x + (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } });
+
+		indices.push_back(firstIndex);
+		indices.push_back(firstIndex + 1);
+		indices.push_back(firstIndex + 2);
+		indices.push_back(firstIndex + 2);
+		indices.push_back(firstIndex + 3);
+		indices.push_back(firstIndex);
 	}
 
 	void cleanupSwapChain()
