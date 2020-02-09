@@ -22,6 +22,9 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SplashScreen.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -32,6 +35,9 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="GameTime.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapLoader.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SplashScreen.h" />
     <ClInclude Include="Sprite.h" />

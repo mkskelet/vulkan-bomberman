@@ -14,10 +14,8 @@ public:
 	void Render();
 	void Start();
 	void Update();
-	void KeyPress(unsigned char key);
+	void KeyPress(int key);
 	void SpecialKeyPress(int key);
 	void OnWindowResized();
-	Texture* GetTexture();
-	Sprite* GetSprite();
 };
 

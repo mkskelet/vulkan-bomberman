@@ -14,6 +14,7 @@
 #include "GameTime.h"
 #include "Scene.h"
 #include "SplashScreen.h"
+#include "MainMenu.h"
 #include "TextureDatabase.h"
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -89,7 +90,10 @@ float viewX = 1.0f;
 float viewY = 1.0f;
 float viewZ = 0.0f;
 
-void moveView(float x, float y, float z) {
+Scene* scene = nullptr;
+
+void moveView(float x, float y, float z)
+{
 	viewX += x;
 	viewY += y;
 	viewZ += z;
@@ -101,26 +105,37 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 {
 	float x = 0, y = 0, z = 0;
 
-	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
 		y = 0.5f;
 	}
-	else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
 		y = -0.5f;
 	}
-	else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
 		x = -0.5f;
 	}
-	else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{
 		x = 0.5f;
 	}
-	else if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+	{
 		z = -0.5f;
 	}
-	else if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	{
 		z = 0.5f;
 	}
 
-	moveView(x, y, z);
+	//moveView(x, y, z);
+
+	if (scene != nullptr && action == GLFW_PRESS)
+	{
+		scene->KeyPress(key);
+	}
 }
 
 class VulkanApp
@@ -1449,35 +1464,52 @@ private:
 
 		glfwSetKeyCallback(window, keyCallback);
 
-		SplashScreen* scene = new SplashScreen();
+		scene = new SplashScreen();
 		scene->Start();
 
 		while (!glfwWindowShouldClose(window))
 		{
+			glfwPollEvents();
+
 			gameTime.UpdateTime(std::chrono::high_resolution_clock::now());
 			scene->Update();
 
+			if (scene->exit)
+			{
+				break;
+			}
+			else if (scene->IsSwitchingScene())
+			{
+				int newScene = scene->GetNextScene();
+				delete scene;
+
+				switch (newScene)
+				{
+				case SCENE_MAIN_MENU:
+					scene = new MainMenu();
+					scene->Start();
+					break;
+				default:
+					break;
+				}
+			}
+
 			// free memory
+			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
 			vkDestroyBuffer(VulkanCore::getInstance().device, indexBuffer, nullptr);
 			vkFreeMemory(VulkanCore::getInstance().device, indexBufferMemory, nullptr);
 
 			vkDestroyBuffer(VulkanCore::getInstance().device, vertexBuffer, nullptr);
 			vkFreeMemory(VulkanCore::getInstance().device, vertexBufferMemory, nullptr);
 			
-			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-
 			// pre render
 			spriteTextureMap.clear();
 			DrawAllSprites(spriteTextureMap);
-			//DrawSingleSprite(scene->GetSprite());
 
 			createVertexBuffer();
 			createIndexBuffer();
-			//UpdateDescriptorSets(&descriptorSets, &(scene->GetTexture()->textureImageView), &(scene->GetTexture()->textureSampler));			
-
 			createCommandBuffers(true);
-
-			glfwPollEvents();
 
 			// render
 			drawFrame();
@@ -1503,8 +1535,6 @@ private:
 				RenderSprite(it);
 			}
 		}
-
-		std::cout << vertices.size() << " " << indices.size();
 	}
 
 	void RenderSprite(Sprite * sprite)
