@@ -155,7 +155,6 @@ private:
 	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
 	VkPipeline graphicsPipeline;
-	VkPipeline graphicsPipeline1;
 
 	std::vector<VkCommandBuffer> commandBuffers;
 
@@ -180,7 +179,6 @@ private:
 
 	VkDescriptorPool descriptorPool;
 	std::vector<VkDescriptorSet> descriptorSets;
-	//std::vector<VkDescriptorSet> descriptorSets1;
 	
 	VkImage depthImage;
 	VkDeviceMemory depthImageMemory;
@@ -221,26 +219,13 @@ private:
 		createRenderPass();
 		createDescriptorSetLayout();
 		createGraphicsPipeline(0, &graphicsPipeline);
-		createGraphicsPipeline(1, &graphicsPipeline1);
 		createCommandPool();
 		createColorResources();
 		createDepthResources();
 		createFramebuffers();
-		//createTextureImage(TEXTURE_PATH.c_str(), &textureImage, &textureImageMemory, true, &mipLevels);
-		//createTextureImage("../textures/texture.jpg", &textureImage, &textureImageMemory, true, &textureMipLevels);
-		//createTextureImage("../textures/texture1.jpg", &backgroundImage, &backgroundImageMemory, true, &backgroundMipLevels);
-		//createTextureImageView(&textureImageView, &textureImage);
-		//createTextureImageView(&backgroundImageView, &backgroundImage);
-		//createTextureSampler(&textureSampler, textureMipLevels);
-		//createTextureSampler(&backgroundSampler, backgroundMipLevels);
-		renderQuad();
-		createVertexBuffer();
-		createIndexBuffer();
 		createUniformBuffers();
 		createDescriptorPool();
-		//createDescriptorSets(&descriptorSets, &textureImageView, &textureSampler);
-		//createDescriptorSets(&descriptorSets1, &backgroundImageView, &backgroundSampler);
-		createCommandBuffers();
+		createDescriptorSets(&descriptorSets, nullptr, nullptr);
 		createSyncObjects();
 	}
 
@@ -248,10 +233,10 @@ private:
 	{
 		vertices.resize(4);
 
-		vertices[0] = { { 0.0f, 0.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 0.0f, 0.0f } };
-		vertices[1] = { { 1.0f, 0.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 1.0f, 0.0f } };
-		vertices[2] = { { 1.0f, 1.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 1.0f, 1.0f } };
-		vertices[3] = { { 0.0f, 1.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 0.0f, 1.0f } };
+		vertices[0] = { { 0.0f, 0.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 1.0f, 0.0f } };
+		vertices[1] = { { 1.0f, 0.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 0.0f, 0.0f } };
+		vertices[2] = { { 1.0f, 1.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 0.0f, 1.0f } };
+		vertices[3] = { { 0.0f, 1.0f, 20.0f}, { 1.f, 1.f, 1.f }, { 1.0f, 1.0f } };
 
 		/*vertices[4] = { { 0.1f, 0.8f, 1.0f}, { 1.f, 1.f, 1.f }, { 0.0f, 0.0f } };
 		vertices[5] = { { 0.2f, 0.8f, 1.0f}, { 1.f, 1.f, 1.f }, { 1.0f, 0.0f } };
@@ -719,14 +704,11 @@ private:
 		createImageViews();
 		createRenderPass();
 		createGraphicsPipeline(0, &graphicsPipeline);
-		createGraphicsPipeline(1, &graphicsPipeline1);
 		createColorResources();
 		createDepthResources();
 		createFramebuffers();
 		createUniformBuffers();
 		createDescriptorPool();
-		//createDescriptorSets(&descriptorSets, &textureImageView, &textureSampler);
-		//createDescriptorSets(&descriptorSets1, &backgroundImageView, &backgroundSampler);
 		createCommandBuffers();
 	}
 
@@ -1276,10 +1258,6 @@ private:
 				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 			}
 
-			/*vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets1[i], 0, nullptr);
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline1);
-			vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() / 2), 1, 6, 0, 0);*/
-
 			vkCmdEndRenderPass(commandBuffers[i]);
 
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
@@ -1352,6 +1330,14 @@ private:
 			throw std::runtime_error("failed to allocate descriptor sets!");
 		}
 
+		if (image != nullptr && sampler != nullptr)
+		{
+			UpdateDescriptorSets(descriptorSets, image, sampler);
+		}
+	}
+
+	void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler)
+	{
 		for (size_t i = 0; i < swapChainImages.size(); i++)
 		{
 			VkDescriptorBufferInfo bufferInfo = {};
@@ -1364,7 +1350,7 @@ private:
 			imageInfo.imageView = *image;
 			imageInfo.sampler = *sampler;
 
-			std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
+			std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = (*descriptorSets)[i];
@@ -1443,21 +1429,28 @@ private:
 		SplashScreen* scene = new SplashScreen();
 		scene->Start();
 
-		bool draw = false;
-
-		vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-
-		createDescriptorSets(&descriptorSets, &(scene->GetSprite()->textureImageView), &(scene->GetSprite()->textureSampler));
-
-		createCommandBuffers(true);
-
 		while (!glfwWindowShouldClose(window))
 		{
 			gameTime.UpdateTime(std::chrono::high_resolution_clock::now());
 			scene->Update();
 
-			// pre render
+			// free memory
+			vkDestroyBuffer(VulkanCore::getInstance().device, indexBuffer, nullptr);
+			vkFreeMemory(VulkanCore::getInstance().device, indexBufferMemory, nullptr);
+
+			vkDestroyBuffer(VulkanCore::getInstance().device, vertexBuffer, nullptr);
+			vkFreeMemory(VulkanCore::getInstance().device, vertexBufferMemory, nullptr);
 			
+			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
+			// pre render
+			DrawSingleSprite(scene->GetSprite());
+
+			createVertexBuffer();
+			createIndexBuffer();
+			UpdateDescriptorSets(&descriptorSets, &(scene->GetTexture()->textureImageView), &(scene->GetTexture()->textureSampler));			
+
+			createCommandBuffers(true);
 
 			glfwPollEvents();
 
@@ -1465,12 +1458,42 @@ private:
 			drawFrame();
 		}
 
+		vkDeviceWaitIdle(VulkanCore::getInstance().device);
+
 		texDB.ReleaseTextures();
 
 		delete scene;
-		delete &texDB;
+	}
 
-		vkDeviceWaitIdle(VulkanCore::getInstance().device);
+	void DrawSingleSprite(Sprite * sprite)
+	{
+		vertices.resize(4);
+
+		glm::vec3 position = sprite->GetPosition();
+		glm::vec2 pivot = sprite->GetPivot();
+		glm::vec2 scale = sprite->GetScale();
+		glm::vec2 tiling = sprite->GetSpriteTiling();
+
+		float absScaleX = abs(scale.x);
+		float absScaleY = abs(scale.y);
+		
+		float tilingX1 = tiling.x >= 0 ? 0.0f : abs(tiling.x);
+		float tilingX2 = tiling.x >= 0 ? tiling.x : 0.0f;
+		float tilingY1 = tiling.y >= 0 ? 0.0f : abs(tiling.y);
+		float tilingY2 = tiling.y >= 0 ? tiling.y : 0.0f;
+
+		vertices[0] = { { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY1 } };
+		vertices[1] = { { position.x + (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } };
+		vertices[2] = { { position.x + (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } };
+		vertices[3] = { { position.x - (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } };
+
+		indices.resize(6);
+		indices[0] = 0;
+		indices[1] = 1;
+		indices[2] = 2;
+		indices[3] = 2;
+		indices[4] = 3;
+		indices[5] = 0;
 	}
 
 	void cleanupSwapChain()
@@ -1491,7 +1514,6 @@ private:
 		vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
 		vkDestroyPipeline(VulkanCore::getInstance().device, graphicsPipeline, nullptr);
-		vkDestroyPipeline(VulkanCore::getInstance().device, graphicsPipeline1, nullptr);
 		vkDestroyPipelineLayout(VulkanCore::getInstance().device, pipelineLayout, nullptr);
 		vkDestroyRenderPass(VulkanCore::getInstance().device, renderPass, nullptr);
 

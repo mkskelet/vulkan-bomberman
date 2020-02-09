@@ -64,11 +64,17 @@ void SplashScreen::SpecialKeyPress(int key)
 /// Method called after window has been resized
 void SplashScreen::OnWindowResized()
 {
-	background = Sprite(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec2(1.0f, 1.0f), nullptr, PIVOT_CENTER);
+	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), nullptr, glm::vec2(0.5f, 0.5f));
 	background.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga"));
+	background.SetSpriteTiling(glm::vec2(-1.0f, 1.0f));
 }
 
-Texture* SplashScreen::GetSprite()
+Texture* SplashScreen::GetTexture()
 {
 	return background.GetTexture();
+}
+
+Sprite* SplashScreen::GetSprite()
+{
+	return &background;
 }
