@@ -31,6 +31,7 @@ public:
 	glm::vec2 GetScale() const { return scale; }
 	glm::vec2 GetPivot() const { return pivot; }
 	glm::vec2 GetSpriteTiling() const { return tiling; }
+	Color GetColor() const { return color; }
 	Texture* GetTexture() const { return texture; }
 	void Render();			///< Method used to render a sprite.
 	void Start();			///< Method called after constructing the object.

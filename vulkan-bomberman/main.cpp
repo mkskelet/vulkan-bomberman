@@ -1566,6 +1566,7 @@ private:
 		glm::vec2 pivot = sprite->GetPivot();
 		glm::vec2 scale = sprite->GetScale();
 		glm::vec2 tiling = sprite->GetSpriteTiling();
+		Color color = sprite->GetColor();
 
 		float absScaleX = abs(scale.x);
 		float absScaleY = abs(scale.y);
@@ -1577,10 +1578,10 @@ private:
 
 		int firstIndex = vertices.size();
 
-		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY1 } });
-		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } });
-		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } });
-		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { color.r, color.g, color.b }, { tilingX1, tilingY1 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY), position.z}, { color.r, color.g, color.b }, { tilingX2, tilingY1 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { color.r, color.g, color.b }, { tilingX2, tilingY2 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { color.r, color.g, color.b }, { tilingX1, tilingY2 } });
 
 		indices.push_back(firstIndex);
 		indices.push_back(firstIndex + 1);
@@ -1754,7 +1755,7 @@ private:
 		UniformBufferObject ubo = {};
 		ubo.model = glm::mat4(1.0f);
 
-		ubo.view = glm::lookAt(glm::vec3(viewX, viewY, viewZ), glm::vec3(viewX, viewY, viewZ) + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.view = glm::lookAt(glm::vec3(viewX, viewY, viewZ) - glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(viewX, viewY, viewZ), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		ubo.proj = glm::ortho(-0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 100.f);
 

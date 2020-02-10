@@ -39,9 +39,24 @@ mapName("")
 /// Function to render scene.
 void MainMenu::Render()
 {
-	// draw background
-	background.Render();
 
+}
+
+/// Method called when scene is created. 
+void MainMenu::Start()
+{
+	showControls = true;
+	/*if (PlayerPrefs::GetBool("First run", true))
+	{
+		showControls = true;
+		PlayerPrefs::SetBool("First run", false);
+	}*/
+	OnWindowResized();
+}
+
+/// Function to update scene.
+void MainMenu::Update()
+{
 	if (showMainMenu)
 	{
 		// draw 1 player button
@@ -63,7 +78,7 @@ void MainMenu::Render()
 		/*if (showControls)
 			controlsBox.Render();*/
 
-		// draw exit button
+			// draw exit button
 		if (menuPosition == MENU_EXIT)
 			exitButton.SetColor(0.8f, 0, 0);
 		else exitButton.SetColor(0.8f, 0.8f, 0);
@@ -128,24 +143,6 @@ void MainMenu::Render()
 			//arrowNext.Render();
 		}
 	}
-}
-
-/// Method called when scene is created. 
-void MainMenu::Start()
-{
-	showControls = true;
-	/*if (PlayerPrefs::GetBool("First run", true))
-	{
-		showControls = true;
-		PlayerPrefs::SetBool("First run", false);
-	}*/
-	OnWindowResized();
-}
-
-/// Function to update scene.
-void MainMenu::Update()
-{
-
 }
 
 /// Method called whenever window has been resized
