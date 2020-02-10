@@ -86,8 +86,8 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 	}
 }
 
-float viewX = 1.0f;
-float viewY = 1.0f;
+float viewX = 0.5f;
+float viewY = 0.5f;
 float viewZ = 0.0f;
 
 Scene* scene = nullptr;
@@ -130,7 +130,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		z = 0.5f;
 	}
 
-	//moveView(x, y, z);
+	moveView(x, y, z);
 
 	if (scene != nullptr && action == GLFW_PRESS)
 	{
@@ -1756,8 +1756,7 @@ private:
 
 		ubo.view = glm::lookAt(glm::vec3(viewX, viewY, viewZ), glm::vec3(viewX, viewY, viewZ) + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		ubo.proj = glm::ortho(0.0f, 1.0f, 1.f, 0.0f, 0.0f, 100.f);
-		ubo.proj[1][1] *= -1;
+		ubo.proj = glm::ortho(-0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 100.f);
 
 		void* data;
 		vkMapMemory(VulkanCore::getInstance().device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
