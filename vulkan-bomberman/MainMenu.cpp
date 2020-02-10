@@ -208,6 +208,7 @@ void MainMenu::KeyPress(int key)
 			break;
 		case MENU_CONTROLS:
 			showControls = !showControls;
+			controlsBox.SetVisible(!controlsBox.IsVisible());
 			break;
 		default:
 			if (!showMainMenu && mapLoader.GetMapList(singlePlayer).size() > previewMapIndex)

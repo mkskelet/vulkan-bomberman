@@ -14,6 +14,7 @@ protected:
 public:
 	bool exit;									///< sgnal for GameWindow to close the game.
 	Scene(int index);
+	virtual ~Scene() {}
 	virtual void Render();						///< Renders whole scene.
 	virtual void Update();						///< Calls update function of each important object in the scene.
 	virtual void KeyPress(int key);

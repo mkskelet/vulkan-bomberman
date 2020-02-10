@@ -10,6 +10,11 @@ SplashScreen::SplashScreen() : Scene(SCENE_SPLASHSCREEN)
 	OnWindowResized();
 }
 
+SplashScreen::~SplashScreen()
+{
+
+}
+
 /// Function to render scene.
 void SplashScreen::Render()
 {
@@ -28,7 +33,7 @@ void SplashScreen::Update()
 	if (timer <= GameTime::Instance->GetTime())
 	{
 		SwitchScene(SCENE_MAIN_MENU);
-		std::cout << "LOAD NEXT SCENE!";
+		std::cout << "LOAD NEXT SCENE!" << std::endl;
 		timer = 1000000000;				// dont want to repeatedly call switch scene
 	}
 }
@@ -54,5 +59,5 @@ void SplashScreen::OnWindowResized()
 {
 	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), nullptr, glm::vec2(0.5f, 0.5f));
 	background.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga"));
-	background.SetSpriteTiling(glm::vec2(-1.0f, 1.0f));
+	Sprite::AddToMap(&background);
 }

@@ -14,6 +14,7 @@ private:
 	glm::vec2 tiling;			///< Pivot mode. See the definition.
 	Color color;
 	static std::map<Texture*, std::vector<Sprite*>> spriteMap;
+	bool visible = true;
 
 public:
 	Sprite() : position(glm::vec3(0, 0, 0)), texture(nullptr), pivot(glm::vec2(0.5f, 0.5f)), color({ 1.0f, 1.0f, 1.0f , 1.0f }), scale(glm::vec2(1.0f, 1.0f)), tiling(glm::vec2(1.0f, 1.0f)) { AddToMap(this); };
@@ -25,17 +26,20 @@ public:
 	void SetTexture(Texture* texture);
 	void SetSpritePivot(glm::vec2 pivot) { this->pivot = pivot; }
 	void SetSpriteTiling(glm::vec2 tiling) { this->tiling = tiling; }
-	void SetColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
-	void SetColor(float r, float g, float b, float a) { color.r = r; color.g = g; color.b = b; color.a = a; }
+	inline void SetColor(float r, float g, float b) { color.r = r; color.g = g; color.b = b; }
+	inline void SetColor(float r, float g, float b, float a) { color.r = r; color.g = g; color.b = b; color.a = a; }
 	glm::vec3 GetPosition() const { return position; }
 	glm::vec2 GetScale() const { return scale; }
 	glm::vec2 GetPivot() const { return pivot; }
 	glm::vec2 GetSpriteTiling() const { return tiling; }
 	Color GetColor() const { return color; }
 	Texture* GetTexture() const { return texture; }
+	void SetVisible(bool visible) { this->visible = visible; }
+	bool IsVisible() { return visible; }
 	void Render();			///< Method used to render a sprite.
 	void Start();			///< Method called after constructing the object.
 	void Update();			///< Method called every frame.
+
 	static std::map<Texture*, std::vector<Sprite*>>& GetSpriteMap() { return spriteMap; }
 	static void AddToMap(Sprite* sprite);
 	static void RemoveFromMap(Sprite* sprite);

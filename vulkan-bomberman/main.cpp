@@ -130,7 +130,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		z = 0.5f;
 	}
 
-	moveView(x, y, z);
+	//moveView(x, y, z);
 
 	if (scene != nullptr && action == GLFW_PRESS)
 	{
@@ -1280,7 +1280,7 @@ private:
 
 				for (auto const& [index, tex] : spriteTextureMap)
 				{
-					if (pendingTexture != nullptr)
+					if (pendingTexture != nullptr && index != pendingIndex)
 					{
 						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[di++][i], 0, nullptr);
 						vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(index - pendingIndex), 1, pendingIndex, 0, 0);
@@ -1467,7 +1467,7 @@ private:
 
 		glfwSetKeyCallback(window, keyCallback);
 
-		scene = new MainMenu();
+		scene = new SplashScreen();
 		scene->Start();
 
 		while (!glfwWindowShouldClose(window))
@@ -1477,7 +1477,7 @@ private:
 			gameTime.UpdateTime(std::chrono::high_resolution_clock::now());
 			scene->Update();
 
-			/*if (scene->exit)
+			if (scene->exit)
 			{
 				break;
 			}
@@ -1495,7 +1495,7 @@ private:
 				default:
 					break;
 				}
-			}*/
+			}
 
 			// free memory
 			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
@@ -1510,12 +1510,15 @@ private:
 			spriteTextureMap.clear();
 			DrawAllSprites(spriteTextureMap);
 
-			createVertexBuffer();
-			createIndexBuffer();
-			createCommandBuffers(true);
+			if (vertices.size() > 0)
+			{
+				createVertexBuffer();
+				createIndexBuffer();
+				createCommandBuffers(true);
 
-			// render
-			drawFrame();
+				// render
+				drawFrame();
+			}
 		}
 
 		vkDeviceWaitIdle(VulkanCore::getInstance().device);
@@ -1562,6 +1565,8 @@ private:
 
 	void RenderSprite(Sprite * sprite)
 	{
+		if (!sprite->IsVisible()) return;
+
 		glm::vec3 position = sprite->GetPosition();
 		glm::vec2 pivot = sprite->GetPivot();
 		glm::vec2 scale = sprite->GetScale();

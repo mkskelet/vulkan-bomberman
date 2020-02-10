@@ -26,7 +26,8 @@ Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, glm::vec2 
 
 Sprite::~Sprite() 
 {
-	std::cout << "deleting sprite " << (this == nullptr ? "null" : "sumting") << std::endl;
+	std::cout << "deleting sprite " << (GetTexture() == nullptr ? "null" : GetTexture()->GetPath()) << std::endl;
+	RemoveFromMap(this);
 }
 
 void Sprite::SetTexture(Texture* texture)
@@ -68,7 +69,7 @@ void Sprite::RemoveFromMap(Sprite* sprite)
 		{
 			TextureDatabase::GetInstance().ReleaseTexture(it->first);
 			spriteMap.erase(it->first);
-			std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
+			//std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
 		}
 	}
 }

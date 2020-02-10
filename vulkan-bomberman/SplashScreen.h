@@ -10,7 +10,8 @@ private:
 	Sprite background;		///< Background sprite.
 	Sprite madeBy;
 public:
-	SplashScreen();
+	SplashScreen(); 
+	~SplashScreen(); 
 	void Render();
 	void Start();
 	void Update();
