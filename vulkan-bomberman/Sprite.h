@@ -14,8 +14,6 @@ private:
 	glm::vec2 tiling;			///< Pivot mode. See the definition.
 	Color color;
 	static std::map<Texture*, std::vector<Sprite*>> spriteMap;
-	static void AddToMap(Sprite* sprite);
-	static void RemoveFromMap(Sprite* sprite);
 
 public:
 	Sprite() : position(glm::vec3(0, 0, 0)), texture(nullptr), pivot(glm::vec2(0.5f, 0.5f)), color({ 1.0f, 1.0f, 1.0f , 1.0f }), scale(glm::vec2(1.0f, 1.0f)), tiling(glm::vec2(1.0f, 1.0f)) { AddToMap(this); };
@@ -38,4 +36,6 @@ public:
 	void Start();			///< Method called after constructing the object.
 	void Update();			///< Method called every frame.
 	static std::map<Texture*, std::vector<Sprite*>>& GetSpriteMap() { return spriteMap; }
+	static void AddToMap(Sprite* sprite);
+	static void RemoveFromMap(Sprite* sprite);
 };

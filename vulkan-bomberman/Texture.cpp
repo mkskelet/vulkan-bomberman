@@ -2,6 +2,8 @@
 
 Texture::Texture(const char* path)
 {
+	//strcpy_s(this->path, sizeof(path), path);
+	this->path = path;
 	textureMipLevels = 1;
 	createTextureImage(path, &textureImage, &textureImageMemory);
 	createTextureImageView(&textureImageView, &textureImage, textureMipLevels);

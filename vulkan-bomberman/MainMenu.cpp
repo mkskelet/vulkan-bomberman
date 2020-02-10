@@ -33,7 +33,7 @@ menuPosition(SINGLE_PLAYER),
 mapName("")
 {
 	// initializing sprites, all this stuff has to be in OnWindowResized() function if we wanna have responsive design
-	OnWindowResized();
+	//OnWindowResized();
 }
 
 /// Function to render scene.
@@ -116,11 +116,11 @@ void MainMenu::Render()
 		// print navigation arrows
 		if (previewMapIndex == 0)
 		{
-			arrowPrev.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_menu.tga"));
+			//arrowPrev.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_menu.tga"));
 		}
 		else
 		{
-			arrowPrev.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_back.tga"));
+			//arrowPrev.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_back.tga"));
 		}
 
 		if (mapLoader.GetMapList(singlePlayer).size() > (previewMapIndex + 1))
@@ -153,40 +153,48 @@ void MainMenu::OnWindowResized()
 {
 	float w = 1.0f;
 	float h = 1.0f;
-	float menuTop = h * 2 / 3;
-	float buttonHeight = h * 1 / 10;
-	float buttonWidth = buttonHeight * 4;
+	float menuTop = 0.66f;
+	float buttonHeight = 0.1f;
+	float buttonWidth = 0.4f;
 
 	// main menu
 	Texture* loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/screen.tga");
 	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), loadedTexture, glm::vec2(0.5f, 0.5f));
-	
+	Sprite::AddToMap(&background);
+
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_1pl.tga");
 	spButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), loadedTexture, glm::vec2(0.0f, 1.0f));
-	
+	Sprite::AddToMap(&spButton);
+
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_2pl.tga");
 	menuTop -= buttonHeight;
 	mpButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), loadedTexture, glm::vec2(0.0f, 1.0f));
-	
+	Sprite::AddToMap(&mpButton);
+
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_ctrl.tga");
 	menuTop -= buttonHeight;
 	controlsButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), loadedTexture, glm::vec2(0.0f, 1.0f));
-	
+	Sprite::AddToMap(&controlsButton);
+
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_exit.tga");
 	menuTop -= buttonHeight;
 	exitButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), loadedTexture, glm::vec2(0.0f, 1.0f));
+	Sprite::AddToMap(&exitButton);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_ctrlbox.tga");
 	menuTop += 4 * buttonHeight;
 	controlsBox = Sprite(glm::vec3(w - (h / 3 * 2), h * 5 / 6, 10.0f), glm::vec2(h / 3 * 2, h / 3 * 2), loadedTexture, glm::vec2(0.0f, 1.0f));
 	controlsBox.SetColor(0, 0, 0.8f);
+	Sprite::AddToMap(&controlsBox);
 
 	// preview
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_back.tga");
 	arrowPrev = Sprite(glm::vec3(10, h / 2 + buttonHeight / 2, 10.0f), glm::vec2(buttonWidth / 2, buttonHeight / 2), loadedTexture, glm::vec2(0.0f, 1.0f));
+	Sprite::AddToMap(&arrowPrev);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_next.tga");
 	arrowNext = Sprite(glm::vec3(w - 10 - buttonWidth / 2, h / 2 + buttonHeight / 2, 10.0f), glm::vec2(buttonWidth / 2, buttonHeight / 2), loadedTexture, glm::vec2(0.0f, 1.0f));
+	Sprite::AddToMap(&arrowNext);
 	//LoadMapPreview();
 }
 

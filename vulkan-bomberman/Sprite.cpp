@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "TextureDatabase.h"
+#include <iostream>
 
 std::map<Texture*, std::vector<Sprite*>> Sprite::spriteMap = {};
 
@@ -11,8 +12,6 @@ Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture) {
 	pivot = glm::vec2(0.5f, 0.5f);
 	tiling = glm::vec2(1.0f, 1.0f);
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	AddToMap(this);
 }
 
 /// Constructor to create sprite with specified position, scale and textureID and pivot.
@@ -23,20 +22,16 @@ Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, glm::vec2 
 	this->pivot = pivot;
 	tiling = glm::vec2(1.0f, 1.0f);
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	AddToMap(this);
 }
 
 Sprite::~Sprite() 
 {
-	RemoveFromMap(this);
+	std::cout << "deleting sprite " << (this == nullptr ? "null" : "sumting") << std::endl;
 }
 
 void Sprite::SetTexture(Texture* texture)
 {
-	RemoveFromMap(this);
 	this->texture = texture;
-	AddToMap(this);
 }
 
 void Sprite::AddToMap(Sprite* sprite)
@@ -45,10 +40,12 @@ void Sprite::AddToMap(Sprite* sprite)
 	if (it != spriteMap.end())
 	{
 		it->second.push_back(sprite);
+		std::cout << "adding reference to sprite map: " << ((it->first == nullptr) ? "null" : it->first->GetPath()) << std::endl;
 	}
 	else
 	{
 		spriteMap[sprite->GetTexture()].push_back(sprite);
+		std::cout << "adding new texture to sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
 	}
 }
 
@@ -63,6 +60,7 @@ void Sprite::RemoveFromMap(Sprite* sprite)
 		if (s != it->second.end())
 		{
 			it->second.erase(s);
+			std::cout << "erasing reference from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
 		}
 
 		// release texture if we don't have any references to it
@@ -70,6 +68,7 @@ void Sprite::RemoveFromMap(Sprite* sprite)
 		{
 			TextureDatabase::GetInstance().ReleaseTexture(it->first);
 			spriteMap.erase(it->first);
+			std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
 		}
 	}
 }

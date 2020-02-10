@@ -193,7 +193,7 @@ private:
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
 
 	VkDescriptorPool descriptorPool;
-	std::vector<VkDescriptorSet> descriptorSets;
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets;
 	
 	VkImage depthImage;
 	VkDeviceMemory depthImageMemory;
@@ -240,7 +240,10 @@ private:
 		createFramebuffers();
 		createUniformBuffers();
 		createDescriptorPool();
-		createDescriptorSets(&descriptorSets, nullptr, nullptr);
+
+		descriptorSets.push_back({});
+		createDescriptorSets(&descriptorSets[0], nullptr, nullptr);
+
 		createSyncObjects();
 	}
 
@@ -1170,7 +1173,7 @@ private:
 
         void* data;
         vkMapMemory(VulkanCore::getInstance().device, stagingBufferMemory, 0, bufferSize, 0, &data);
-            memcpy(data, vertices.data(), (size_t) bufferSize);
+        memcpy(data, vertices.data(), (size_t) bufferSize);
         vkUnmapMemory(VulkanCore::getInstance().device, stagingBufferMemory);
 
         createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
@@ -1273,12 +1276,13 @@ private:
 				int pendingIndex = 0;
 				Texture* pendingTexture = nullptr;
 
+				int di = 0;
+
 				for (auto const& [index, tex] : spriteTextureMap)
 				{
 					if (pendingTexture != nullptr)
 					{
-						UpdateDescriptorSets(&descriptorSets, &pendingTexture->textureImageView, &pendingTexture->textureSampler);
-						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[di++][i], 0, nullptr);
 						vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(index - pendingIndex), 1, pendingIndex, 0, 0);
 					}
 
@@ -1288,8 +1292,7 @@ private:
 
 				if (pendingTexture != nullptr)
 				{
-					UpdateDescriptorSets(&descriptorSets, &pendingTexture->textureImageView, &pendingTexture->textureSampler);
-					vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+					vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[di][i], 0, nullptr);
 					vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size() - pendingIndex), 1, pendingIndex, 0, 0);
 				}
 			}
@@ -1333,15 +1336,15 @@ private:
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2);
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2);
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
 
 		VkDescriptorPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 2);;
+		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 20);
 
 		if (vkCreateDescriptorPool(VulkanCore::getInstance().device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -1464,7 +1467,7 @@ private:
 
 		glfwSetKeyCallback(window, keyCallback);
 
-		scene = new SplashScreen();
+		scene = new MainMenu();
 		scene->Start();
 
 		while (!glfwWindowShouldClose(window))
@@ -1474,7 +1477,7 @@ private:
 			gameTime.UpdateTime(std::chrono::high_resolution_clock::now());
 			scene->Update();
 
-			if (scene->exit)
+			/*if (scene->exit)
 			{
 				break;
 			}
@@ -1492,7 +1495,7 @@ private:
 				default:
 					break;
 				}
-			}
+			}*/
 
 			// free memory
 			vkFreeCommandBuffers(VulkanCore::getInstance().device, VulkanCore::getInstance().commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
@@ -1519,6 +1522,7 @@ private:
 
 		texDB.ReleaseTextures();
 
+		std::cout << "delete scene" << std::endl;
 		delete scene;
 	}
 
@@ -1527,9 +1531,28 @@ private:
 		vertices.resize(0);
 		indices.resize(0);
 
+		int di = 0;
+
 		for (auto const& [tex, sprites] : Sprite::GetSpriteMap())
 		{
-			map[indices.size()] = tex;
+			if (tex == nullptr)
+			{
+				continue;
+			}
+
+			int index = indices.size();
+			map[index] = tex;
+			
+			if (descriptorSets.size() <= di)
+			{
+				descriptorSets.push_back({});
+				createDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+			}
+			else
+			{
+				UpdateDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+			}
+
 			for (auto const& it : sprites)
 			{
 				RenderSprite(it);
@@ -1555,9 +1578,9 @@ private:
 		int firstIndex = vertices.size();
 
 		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY1 } });
-		vertices.push_back({ { position.x + (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } });
-		vertices.push_back({ { position.x + (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } });
-		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y + (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY), position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY1 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { 1.f, 1.f, 1.f }, { tilingX2, tilingY2 } });
+		vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY) + absScaleY, position.z}, { 1.f, 1.f, 1.f }, { tilingX1, tilingY2 } });
 
 		indices.push_back(firstIndex);
 		indices.push_back(firstIndex + 1);
@@ -1726,7 +1749,6 @@ private:
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
 		auto currentTime = std::chrono::high_resolution_clock::now();
-		//float f = std::chrono::time_point_cast<float>(currentTime);
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo = {};
