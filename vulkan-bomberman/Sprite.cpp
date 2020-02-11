@@ -5,20 +5,20 @@
 std::map<Texture*, std::vector<Sprite*>> Sprite::spriteMap = {};
 
 /// Constructor to create sprite with specified position, scale and textureID, default pivot PIVOT_CENTER is used.
-Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture) {
+Sprite::Sprite(glm::vec3 position, glm::vec2 scale) {
 	this->position = position;
 	this->scale = scale;
-	this->texture = texture;
+	this->texture = nullptr;
 	pivot = glm::vec2(0.5f, 0.5f);
 	tiling = glm::vec2(1.0f, 1.0f);
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 /// Constructor to create sprite with specified position, scale and textureID and pivot.
-Sprite::Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, glm::vec2 pivot) {
+Sprite::Sprite(glm::vec3 position, glm::vec2 scale, glm::vec2 pivot) {
 	this->position = position;
 	this->scale = scale;
-	this->texture = texture;
+	this->texture = nullptr;
 	this->pivot = pivot;
 	tiling = glm::vec2(1.0f, 1.0f);
 	color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -59,6 +59,9 @@ void Sprite::AddToMap(Sprite* sprite)
 void Sprite::RemoveFromMap(Sprite* sprite)
 {
 	auto it = spriteMap.find(sprite->GetTexture());
+
+	std::cout << "remove from map: " << (sprite->GetTexture() == nullptr ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
+
 	if (it != spriteMap.end())
 	{
 		auto s = std::find(it->second.begin(), it->second.end(), sprite);

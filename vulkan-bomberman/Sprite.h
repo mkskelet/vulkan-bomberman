@@ -18,8 +18,8 @@ private:
 
 public:
 	Sprite() : position(glm::vec3(0, 0, 0)), texture(nullptr), pivot(glm::vec2(0.5f, 0.5f)), color({ 1.0f, 1.0f, 1.0f , 1.0f }), scale(glm::vec2(1.0f, 1.0f)), tiling(glm::vec2(1.0f, 1.0f)) { };
-	Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture);
-	Sprite(glm::vec3 position, glm::vec2 scale, Texture* texture, glm::vec2 pivot);
+	Sprite(glm::vec3 position, glm::vec2 scale);
+	Sprite(glm::vec3 position, glm::vec2 scale, glm::vec2 pivot);
 	~Sprite();
 	//Sprite operator=(Sprite tmp);
 	void SetPosition(glm::vec3 position) { this->position = position; }
