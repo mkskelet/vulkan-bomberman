@@ -156,7 +156,9 @@ void MainMenu::OnWindowResized()
 
 	// main menu
 	Texture* loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/screen.tga");
-	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), loadedTexture, glm::vec2(0.5f, 0.5f));
+	//background.~Sprite();
+	Sprite b = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), loadedTexture, glm::vec2(0.5f, 0.5f));
+	background = b;
 	Sprite::AddToMap(&background);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_1pl.tga");

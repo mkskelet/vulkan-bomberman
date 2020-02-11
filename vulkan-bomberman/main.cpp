@@ -86,6 +86,7 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 	}
 }
 
+// begin Debug
 float viewX = 0.5f;
 float viewY = 0.5f;
 float viewZ = 0.0f;
@@ -100,6 +101,31 @@ void moveView(float x, float y, float z)
 
 	std::cout << "x " << viewX << ", y " << viewY << ",z " << viewZ << std::endl;
 }
+// end
+
+// begin Debug
+void ProcessDebugCommands(int key)
+{
+	switch (key)
+	{
+	case GLFW_KEY_F1:
+	{
+		// debug Sprite map
+		auto smap = Sprite::GetSpriteMap();
+
+		std::cout << std::endl << "Sprite map debug: " << std::endl;
+		for (const auto& [tex, vec] : smap)
+		{
+			std::cout << (tex != nullptr ? tex->GetPath() : "null") << ", ref count: " << vec.size() << std::endl;
+		}
+
+		break;
+	}
+	default:
+		break;
+	}
+}
+// end
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -135,6 +161,8 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (scene != nullptr && action == GLFW_PRESS)
 	{
 		scene->KeyPress(key);
+
+		ProcessDebugCommands(key);
 	}
 }
 

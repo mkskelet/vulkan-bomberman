@@ -30,6 +30,12 @@ Sprite::~Sprite()
 	RemoveFromMap(this);
 }
 
+//Sprite Sprite::operator=(Sprite tmp)
+//{
+//	this->~Sprite();
+//	return tmp;
+//}
+
 void Sprite::SetTexture(Texture* texture)
 {
 	this->texture = texture;
