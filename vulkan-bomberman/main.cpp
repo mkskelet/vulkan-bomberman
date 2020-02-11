@@ -1572,28 +1572,35 @@ private:
 			}
 
 			int index = indices.size();
-			map[index] = tex;
-			
-			if (descriptorSets.size() <= di)
-			{
-				descriptorSets.push_back({});
-				createDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
-			}
-			else
-			{
-				UpdateDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
-			}
+			bool renderedAny = false;
 
 			for (auto const& it : sprites)
 			{
-				RenderSprite(it);
+				bool result = RenderSprite(it);
+
+				renderedAny = !renderedAny ? result : renderedAny;
+			}
+
+			if (renderedAny)
+			{
+				map[index] = tex;
+
+				if (descriptorSets.size() <= di)
+				{
+					descriptorSets.push_back({});
+					createDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+				}
+				else
+				{
+					UpdateDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+				}
 			}
 		}
 	}
 
-	void RenderSprite(Sprite * sprite)
+	bool RenderSprite(Sprite * sprite)
 	{
-		if (!sprite->IsVisible()) return;
+		if (!sprite->IsVisible()) return false;
 
 		glm::vec3 position = sprite->GetPosition();
 		glm::vec2 pivot = sprite->GetPivot();
@@ -1622,6 +1629,8 @@ private:
 		indices.push_back(firstIndex + 2);
 		indices.push_back(firstIndex + 3);
 		indices.push_back(firstIndex);
+
+		return true;
 	}
 
 	void cleanupSwapChain()
