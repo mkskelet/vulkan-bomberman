@@ -45,6 +45,10 @@
     <ClInclude Include="TextureDatabase.h" />
     <ClInclude Include="VulkanCore.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\shader.frag" />
+    <None Include="..\shaders\shader.vert" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{16FA5424-27B6-4381-B467-E51A3180D415}</ProjectGuid>
