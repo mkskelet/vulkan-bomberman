@@ -155,50 +155,59 @@ void MainMenu::OnWindowResized()
 	float buttonWidth = 0.4f;
 
 	// main menu
+	Shader* shader = Shader::Find("uber");
 	Texture* loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/screen.tga");
+	Material* material = new Material(shader, loadedTexture);
 	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), glm::vec2(0.5f, 0.5f));
-	background.SetTexture(loadedTexture);
+	background.SetMaterial(material);
 	Sprite::AddToMap(&background);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_1pl.tga");
+	material = new Material(shader, loadedTexture);
 	spButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), glm::vec2(0.0f, 1.0f));
-	spButton.SetTexture(loadedTexture);
+	spButton.SetMaterial(material);
 	Sprite::AddToMap(&spButton);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_2pl.tga");
+	material = new Material(shader, loadedTexture);
 	menuTop += buttonHeight;
 	mpButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), glm::vec2(0.0f, 1.0f));
-	mpButton.SetTexture(loadedTexture);
+	mpButton.SetMaterial(material);
 	Sprite::AddToMap(&mpButton);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_ctrl.tga");
+	material = new Material(shader, loadedTexture);
 	menuTop += buttonHeight;
 	controlsButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), glm::vec2(0.0f, 1.0f));
-	controlsButton.SetTexture(loadedTexture);
+	controlsButton.SetMaterial(material);
 	Sprite::AddToMap(&controlsButton);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_exit.tga");
+	material = new Material(shader, loadedTexture);
 	menuTop += buttonHeight;
 	exitButton = Sprite(glm::vec3(0.05f, menuTop, 10.0f), glm::vec2(buttonWidth, buttonHeight), glm::vec2(0.0f, 1.0f));
-	exitButton.SetTexture(loadedTexture);
+	exitButton.SetMaterial(material);
 	Sprite::AddToMap(&exitButton);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/mm_ctrlbox.tga");
+	material = new Material(shader, loadedTexture);
 	menuTop -= 4 * buttonHeight;
 	controlsBox = Sprite(glm::vec3(w - (h / 3 * 2), h * 5 / 6, 10.0f), glm::vec2(h / 3 * 2, h / 3 * 2), glm::vec2(0.0f, 1.0f));
 	controlsBox.SetColor(0, 0, 0.8f);
-	controlsBox.SetTexture(loadedTexture);
+	controlsBox.SetMaterial(material);
 	Sprite::AddToMap(&controlsBox);
 
 	// preview
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_back.tga");
+	material = new Material(shader, loadedTexture);
 	arrowPrev = Sprite(glm::vec3(10, h / 2 + buttonHeight / 2, 10.0f), glm::vec2(buttonWidth / 2, buttonHeight / 2), glm::vec2(0.0f, 1.0f));
-	arrowPrev.SetTexture(loadedTexture);
+	arrowPrev.SetMaterial(material);
 	Sprite::AddToMap(&arrowPrev);
 
 	loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_next.tga");
+	material = new Material(shader, loadedTexture);
 	arrowNext = Sprite(glm::vec3(w - 10 - buttonWidth / 2, h / 2 + buttonHeight / 2, 10.0f), glm::vec2(buttonWidth / 2, buttonHeight / 2), glm::vec2(0.0f, 1.0f));
-	arrowNext.SetTexture(loadedTexture);
+	arrowNext.SetMaterial(material);
 	Sprite::AddToMap(&arrowNext);
 	//LoadMapPreview();
 }

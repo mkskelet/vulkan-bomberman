@@ -57,7 +57,10 @@ void SplashScreen::SpecialKeyPress(int key)
 /// Method called after window has been resized
 void SplashScreen::OnWindowResized()
 {
+	Shader* shader = Shader::Find("uber");
 	background = Sprite(glm::vec3(0.5f, 0.5f, 20.0f), glm::vec2(1.0f, 1.0f), glm::vec2(0.5f, 0.5f));
-	background.SetTexture(TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga"));
+	Texture* loadedTexture = TextureDatabase::GetInstance().GetTexture("../sprites/splashscreen.tga");
+	Material* material = new Material(shader, loadedTexture);
+	background.SetMaterial(material);
 	Sprite::AddToMap(&background);
 }

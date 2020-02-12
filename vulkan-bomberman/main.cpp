@@ -1492,6 +1492,7 @@ private:
 		GameTime gameTime = GameTime(std::chrono::high_resolution_clock::now());
 
 		TextureDatabase texDB;
+		Shader uberShader = Shader("uber", "../shaders/vert.spv", "../shaders/frag.spv");
 
 		glfwSetKeyCallback(window, keyCallback);
 
@@ -1564,9 +1565,9 @@ private:
 
 		int di = 0;
 
-		for (auto const& [tex, sprites] : Sprite::GetSpriteMap())
+		for (auto const& [mat, sprites] : Sprite::GetSpriteMap())
 		{
-			if (tex == nullptr)
+			if (mat == nullptr || mat->GetTexture())
 			{
 				continue;
 			}
@@ -1583,16 +1584,16 @@ private:
 
 			if (renderedAny)
 			{
-				map[index] = tex;
+				map[index] = mat->GetTexture();
 
 				if (descriptorSets.size() <= di)
 				{
 					descriptorSets.push_back({});
-					createDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+					createDescriptorSets(&descriptorSets[di++], &mat->GetTexture()->textureImageView, &mat->GetTexture()->textureSampler);
 				}
 				else
 				{
-					UpdateDescriptorSets(&descriptorSets[di++], &tex->textureImageView, &tex->textureSampler);
+					UpdateDescriptorSets(&descriptorSets[di++], &mat->GetTexture()->textureImageView, &mat->GetTexture()->textureSampler);
 				}
 			}
 		}
