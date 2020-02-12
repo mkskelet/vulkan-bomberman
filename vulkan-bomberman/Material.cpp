@@ -1,9 +1,11 @@
 #include "Material.h"
+#include "TextureDatabase.h"
 
 Material::Material(Shader* shader, Texture* texture)
 {
 	this->shader = shader;
 	this->texture = texture;
+	this->texture->IncrementRefCount();
 
 	// TODO create descriptor sets
 
@@ -16,6 +18,10 @@ Material::~Material()
 	// TODO free descriptor sets
 
 
-	// TODO free texture
-
+	// free texture
+	texture->DecrementRefCount();
+	if (texture->GetRefCount() <= 0)
+	{
+		TextureDatabase::GetInstance().ReleaseTexture(texture);
+	}
 }
