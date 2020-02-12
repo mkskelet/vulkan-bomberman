@@ -25,9 +25,12 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SplashScreen.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureDatabase.cpp" />
     <ClCompile Include="VulkanCore.cpp" />
@@ -38,9 +41,12 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="SplashScreen.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureDatabase.h" />
     <ClInclude Include="VulkanCore.h" />

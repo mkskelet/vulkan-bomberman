@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+std::map<const char*, Shader*> Shader::shaderMap = {};
+
 Shader::Shader(const char* name, const char* fragmentShaderPath, const char* vertexShaderPath)
 {
 	this->name = name;

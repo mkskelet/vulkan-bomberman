@@ -111,7 +111,7 @@ void ProcessDebugCommands(int key)
 	case GLFW_KEY_F1:
 	{
 		// debug Sprite map
-		auto smap = Sprite::GetSpriteMap();
+		/*auto smap = Sprite::GetSpriteMap();
 
 		std::cout << std::endl << "Sprite map debug: " << std::endl;
 		for (const auto& [tex, vec] : smap)
@@ -119,7 +119,7 @@ void ProcessDebugCommands(int key)
 			std::cout << (tex != nullptr ? tex->GetPath() : "null") << ", ref count: " << vec.size() << std::endl;
 		}
 
-		break;
+		break;*/
 	}
 	default:
 		break;
