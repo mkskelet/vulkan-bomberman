@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+// don't create textures for use in materials directly, use TextureDatabase::GetTexture
 Texture::Texture(const char* path)
 {
 	//strcpy_s(this->path, sizeof(path), path);

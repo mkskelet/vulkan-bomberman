@@ -3,11 +3,12 @@
 #include <map>
 
 #include "Texture.h"
+#include "StringUtils.h"
 
 class TextureDatabase
 {
 private:
-	std::map<const char*, Texture*> textures;
+	std::map<const char*, Texture*, cmp_str> textures;
 
 public:
 	TextureDatabase() : textures({}) {};

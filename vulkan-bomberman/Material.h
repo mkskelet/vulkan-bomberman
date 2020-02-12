@@ -13,6 +13,6 @@ private:
 public:
 	Material(Shader* shader, Texture* texture);
 	~Material();
-	int GetDescriptorSetIndex();
+	int GetDescriptorSetIndex() { return descriptorSetIndex; }
 };
 
