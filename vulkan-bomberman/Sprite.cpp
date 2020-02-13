@@ -26,61 +26,56 @@ Sprite::Sprite(glm::vec3 position, glm::vec2 scale, glm::vec2 pivot) {
 
 Sprite::~Sprite() 
 {
-	//std::cout << "deleting sprite " << (GetTexture() == nullptr ? "null" : GetTexture()->GetPath()) << std::endl;
+	std::cout << "deleting sprite " << (GetMaterial() == nullptr ? "null" : GetMaterial()->GetTexture()->GetPath()) << std::endl;
 	RemoveFromMap(this);
 }
 
-//Sprite Sprite::operator=(Sprite tmp)
-//{
-//	this->~Sprite();
-//	return tmp;
-//}
-
 void Sprite::SetMaterial(Material* material)
 {
-	//this->texture = texture;
+	this->material = material;
 }
 
 void Sprite::AddToMap(Sprite* sprite)
 {
-	/*auto it = spriteMap.find(sprite->GetTexture());
+	auto it = spriteMap.find(sprite->GetMaterial());
 	if (it != spriteMap.end())
 	{
 		it->second.push_back(sprite);
-		std::cout << "adding reference to sprite map: " << ((it->first == nullptr) ? "null" : it->first->GetPath()) << std::endl;
+		std::cout << "adding reference to sprite map: " << ((it->first == nullptr) ? "null" : it->first->GetTexture()->GetPath()) << std::endl;
 	}
 	else
 	{
-		spriteMap[sprite->GetTexture()].push_back(sprite);
-		std::cout << "adding new texture to sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
-	}*/
+		spriteMap[sprite->GetMaterial()].push_back(sprite);
+		std::cout << "adding new texture to sprite map: " << ((sprite->GetMaterial() == nullptr) ? "null" : sprite->GetMaterial()->GetTexture()->GetPath()) << std::endl;
+	}
 }
 
 void Sprite::RemoveFromMap(Sprite* sprite)
 {
-	//auto it = spriteMap.find(sprite->GetTexture());
+	auto it = spriteMap.find(sprite->GetMaterial());
 
-	//std::cout << "remove from map: " << (sprite->GetTexture() == nullptr ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
+	std::cout << "remove from map: " << (sprite->GetMaterial() == nullptr ? "null" : sprite->GetMaterial()->GetTexture()->GetPath()) << std::endl;
 
-	//if (it != spriteMap.end())
-	//{
-	//	auto s = std::find(it->second.begin(), it->second.end(), sprite);
+	if (it != spriteMap.end())
+	{
+		auto s = std::find(it->second.begin(), it->second.end(), sprite);
 
-	//	// remove sprite from map if we found it
-	//	if (s != it->second.end())
-	//	{
-	//		it->second.erase(s);
-	//		std::cout << "erasing reference from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
-	//	}
+		// remove sprite from map if we found it
+		if (s != it->second.end())
+		{
+			it->second.erase(s);
+			std::cout << "erasing reference from sprite map: " << ((sprite->GetMaterial() == nullptr) ? "null" : sprite->GetMaterial()->GetTexture()->GetPath()) << std::endl;
+		}
 
-	//	// release texture if we don't have any references to it
-	//	if (it->second.size() == 0)
-	//	{
-	//		TextureDatabase::GetInstance().ReleaseTexture(it->first);
-	//		spriteMap.erase(it->first);
-	//		//std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
-	//	}
-	//}
+		// release texture if we don't have any references to it
+		if (it->second.size() == 0)
+		{
+			Material* mat = it->first;
+			spriteMap.erase(mat);
+			delete mat;
+			//std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
+		}
+	}
 }
 
 void Sprite::Render() {
