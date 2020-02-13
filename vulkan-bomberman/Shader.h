@@ -13,7 +13,7 @@ private:
 	static std::map<const char*, Shader*> shaderMap;
 
 public:
-	Shader(const char* name, const char* fragmentShaderPath, const char* vertexShaderPath);
+	Shader(const char* name, const char* vertexShaderPath, const char* fragmentShaderPath);
 	~Shader();
 	int GetShaderIndex() { return shaderIndex; }
 

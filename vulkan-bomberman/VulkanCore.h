@@ -26,7 +26,7 @@ struct  Vertex
 	bool operator==(const Vertex& other) const;
 };
 
-class VulkanCore
+class VulkanRenderer
 {
 public:
 	VkQueue graphicsQueue;
@@ -34,7 +34,15 @@ public:
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
 
-	static VulkanCore& getInstance();
+	VkRenderPass renderPass;
+	VkDescriptorSetLayout descriptorSetLayout;
+	VkPipelineLayout pipelineLayout;
+
+	VkExtent2D swapChainExtent;
+	VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+	std::vector<VkPipeline> graphicsPipelines;
+
+	static VulkanRenderer& GetInstance();
 };
 
 // Global functions
@@ -51,3 +59,6 @@ void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t 
 void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 bool hasStencilComponent(VkFormat format);
+void createGraphicsPipeline(int& index, const char* vertexShaderPath, const char* fragmentShaderPath);
+std::vector<char> readFile(const std::string& filename);
+VkShaderModule createShaderModule(const std::vector<char>& code);

@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "VulkanCore.h"
 
 std::map<const char*, Shader*> Shader::shaderMap = {};
 
@@ -8,8 +9,7 @@ Shader::Shader(const char* name, const char* fragmentShaderPath, const char* ver
 	this->fragmentShader = fragmentShaderPath;
 	this->vertexShader = vertexShaderPath;
 
-	// TODO create graphic pipeline
-
+	createGraphicsPipeline(shaderIndex, vertexShaderPath, fragmentShaderPath);
 
 	shaderMap[name] = this;
 }

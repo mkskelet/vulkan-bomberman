@@ -15,8 +15,8 @@ Texture::Texture(const char* path)
 
 Texture::~Texture()
 {
-	vkDestroySampler(VulkanCore::getInstance().device, textureSampler, nullptr);
-	vkDestroyImageView(VulkanCore::getInstance().device, textureImageView, nullptr);
-	vkDestroyImage(VulkanCore::getInstance().device, textureImage, nullptr);
-	vkFreeMemory(VulkanCore::getInstance().device, textureImageMemory, nullptr);
+	vkDestroySampler(VulkanRenderer::GetInstance().device, textureSampler, nullptr);
+	vkDestroyImageView(VulkanRenderer::GetInstance().device, textureImageView, nullptr);
+	vkDestroyImage(VulkanRenderer::GetInstance().device, textureImage, nullptr);
+	vkFreeMemory(VulkanRenderer::GetInstance().device, textureImageMemory, nullptr);
 }
