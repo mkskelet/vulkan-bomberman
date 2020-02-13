@@ -38,13 +38,6 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-struct UniformBufferObject
-{
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
-};
-
 struct QueueFamilyIndices
 {
 	std::optional<uint32_t> graphicsFamily;
@@ -189,9 +182,7 @@ private:
 	VkQueue presentQueue;
 
 	VkSwapchainKHR swapChain;
-	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
-
 	std::vector<VkImageView> swapChainImageViews;
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 
@@ -211,7 +202,6 @@ private:
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
 
-	std::vector<VkBuffer> uniformBuffers;
 	std::vector<VkDeviceMemory> uniformBuffersMemory;
 
 	VkDescriptorPool descriptorPool;
@@ -807,8 +797,8 @@ private:
 		}
 
 		vkGetSwapchainImagesKHR(renderer.device, swapChain, &imageCount, nullptr);
-		swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(renderer.device, swapChain, &imageCount, swapChainImages.data());
+		renderer.swapChainImages.resize(imageCount);
+		vkGetSwapchainImagesKHR(renderer.device, swapChain, &imageCount, renderer.swapChainImages.data());
 
 		swapChainImageFormat = surfaceFormat.format;
 		renderer.swapChainExtent = extent;
@@ -816,11 +806,11 @@ private:
 
 	void createImageViews()
 	{
-		swapChainImageViews.resize(swapChainImages.size());
+		swapChainImageViews.resize(renderer.swapChainImages.size());
 
-		for (uint32_t i = 0; i < swapChainImages.size(); i++)
+		for (uint32_t i = 0; i < renderer.swapChainImages.size(); i++)
 		{
-			swapChainImageViews[i] = createImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+			swapChainImageViews[i] = createImageView(renderer.swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 		}
 	}
 
@@ -1068,12 +1058,12 @@ private:
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
-		uniformBuffers.resize(swapChainImages.size());
-		uniformBuffersMemory.resize(swapChainImages.size());
+		renderer.uniformBuffers.resize(renderer.swapChainImages.size());
+		uniformBuffersMemory.resize(renderer.swapChainImages.size());
 
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < renderer.swapChainImages.size(); i++)
 		{
-			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, renderer.uniformBuffers[i], uniformBuffersMemory[i]);
 		}
 	}
 
@@ -1175,7 +1165,7 @@ private:
 		imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 		inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
-		imagesInFlight.resize(swapChainImages.size(), VK_NULL_HANDLE);
+		imagesInFlight.resize(renderer.swapChainImages.size(), VK_NULL_HANDLE);
 
 		VkSemaphoreCreateInfo semaphoreInfo = {};
 		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -1200,78 +1190,19 @@ private:
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(renderer.swapChainImages.size() * 20);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(renderer.swapChainImages.size() * 20);
 
 		VkDescriptorPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 20);
+		poolInfo.maxSets = static_cast<uint32_t>(renderer.swapChainImages.size() * 20);
 
 		if (vkCreateDescriptorPool(renderer.device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create descriptor pool!");
-		}
-	}
-
-	void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImageView * image, VkSampler * sampler)
-	{
-		std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), renderer.descriptorSetLayout);
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool;
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
-		allocInfo.pSetLayouts = layouts.data();
-
-		descriptorSets->resize(swapChainImages.size());
-		VkResult result = vkAllocateDescriptorSets(renderer.device, &allocInfo, descriptorSets->data());
-		if (result != VK_SUCCESS)
-		{
-			std::cout << result;
-			throw std::runtime_error("failed to allocate descriptor sets!");
-		}
-
-		if (image != nullptr && sampler != nullptr)
-		{
-			UpdateDescriptorSets(descriptorSets, image, sampler);
-		}
-	}
-
-	void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler)
-	{
-		for (size_t i = 0; i < swapChainImages.size(); i++)
-		{
-			VkDescriptorBufferInfo bufferInfo = {};
-			bufferInfo.buffer = uniformBuffers[i];
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
-
-			VkDescriptorImageInfo imageInfo = {};
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = *image;
-			imageInfo.sampler = *sampler;
-
-			std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
-
-			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrites[0].dstSet = (*descriptorSets)[i];
-			descriptorWrites[0].dstBinding = 0;
-			descriptorWrites[0].dstArrayElement = 0;
-			descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrites[0].descriptorCount = 1;
-			descriptorWrites[0].pBufferInfo = &bufferInfo;
-
-			descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrites[1].dstSet = (*descriptorSets)[i];
-			descriptorWrites[1].dstBinding = 1;
-			descriptorWrites[1].dstArrayElement = 0;
-			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptorWrites[1].descriptorCount = 1;
-			descriptorWrites[1].pImageInfo = &imageInfo;
-
-			vkUpdateDescriptorSets(renderer.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
 	}
 
@@ -1463,9 +1394,9 @@ private:
 
 		vkDestroySwapchainKHR(renderer.device, swapChain, nullptr);
 
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		for (size_t i = 0; i < renderer.swapChainImages.size(); i++)
 		{
-			vkDestroyBuffer(renderer.device, uniformBuffers[i], nullptr);
+			vkDestroyBuffer(renderer.device, renderer.uniformBuffers[i], nullptr);
 			vkFreeMemory(renderer.device, uniformBuffersMemory[i], nullptr);
 		}
 

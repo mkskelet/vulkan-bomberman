@@ -26,6 +26,13 @@ struct  Vertex
 	bool operator==(const Vertex& other) const;
 };
 
+struct UniformBufferObject
+{
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
 class VulkanRenderer
 {
 public:
@@ -38,9 +45,13 @@ public:
 	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
 
-	VkExtent2D swapChainExtent;
 	VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 	std::vector<VkPipeline> graphicsPipelines;
+
+	VkExtent2D swapChainExtent;
+	std::vector<VkImage> swapChainImages;
+
+	std::vector<VkBuffer> uniformBuffers;
 
 	static VulkanRenderer& GetInstance();
 };
@@ -62,3 +73,5 @@ bool hasStencilComponent(VkFormat format);
 void createGraphicsPipeline(int& index, const char* vertexShaderPath, const char* fragmentShaderPath);
 std::vector<char> readFile(const std::string& filename);
 VkShaderModule createShaderModule(const std::vector<char>& code);
+void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImageView * image, VkSampler * sampler);
+void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler);

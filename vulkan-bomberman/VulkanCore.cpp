@@ -680,3 +680,61 @@ VkShaderModule createShaderModule(const std::vector<char>& code)
 
 	return shaderModule;
 }
+
+void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImageView * image, VkSampler * sampler)
+{
+	std::vector<VkDescriptorSetLayout> layouts(VulkanRenderer::GetInstance().swapChainImages.size(), VulkanRenderer::GetInstance().descriptorSetLayout);
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = VulkanRenderer::GetInstance().descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(VulkanRenderer::GetInstance().swapChainImages.size());
+	allocInfo.pSetLayouts = layouts.data();
+
+	descriptorSets->resize(VulkanRenderer::GetInstance().swapChainImages.size());
+	VkResult result = vkAllocateDescriptorSets(VulkanRenderer::GetInstance().device, &allocInfo, descriptorSets->data());
+	if (result != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to allocate descriptor sets!");
+	}
+
+	if (image != nullptr && sampler != nullptr)
+	{
+		UpdateDescriptorSets(descriptorSets, image, sampler);
+	}
+}
+
+void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler)
+{
+	for (size_t i = 0; i < VulkanRenderer::GetInstance().swapChainImages.size(); i++)
+	{
+		VkDescriptorBufferInfo bufferInfo = {};
+		bufferInfo.buffer = VulkanRenderer::GetInstance().uniformBuffers[i];
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(UniformBufferObject);
+
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = *image;
+		imageInfo.sampler = *sampler;
+
+		std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = (*descriptorSets)[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = (*descriptorSets)[i];
+		descriptorWrites[1].dstBinding = 1;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pImageInfo = &imageInfo;
+
+		vkUpdateDescriptorSets(VulkanRenderer::GetInstance().device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
+}
