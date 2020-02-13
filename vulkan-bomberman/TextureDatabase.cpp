@@ -14,8 +14,13 @@ void TextureDatabase::ReleaseTexture(Texture* texture)
 	{
 		if (tex == texture)
 		{
-			delete tex;
-			textures.erase(path);
+			tex->DecrementRefCount();
+
+			if (tex->GetRefCount() <= 0)
+			{
+				delete tex;
+				textures.erase(path);
+			}
 			break;
 		}
 	}
@@ -27,12 +32,14 @@ Texture* TextureDatabase::GetTexture(const char* path)
 
 	if (i != textures.end())
 	{
+		i->second->IncrementRefCount();
 		return i->second;
 	}
 	else
 	{
 		Texture* t = new Texture(path);
 		textures[path] = t;
+		t->IncrementRefCount();
 		return t;
 	}
 }
