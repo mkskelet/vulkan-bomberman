@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "VulkanCore.h"
+#include <iostream>
 
 std::map<const char*, Shader*> Shader::shaderMap = {};
 
@@ -11,6 +12,7 @@ Shader::Shader(const char* name, const char* fragmentShaderPath, const char* ver
 
 	createGraphicsPipeline(shaderIndex, vertexShaderPath, fragmentShaderPath);
 
+	std::cout << "shader index " << shaderIndex << std::endl;
 	shaderMap[name] = this;
 }
 

@@ -53,6 +53,9 @@ public:
 
 	std::vector<VkBuffer> uniformBuffers;
 
+	VkDescriptorPool descriptorPool;
+	std::vector<std::vector<VkDescriptorSet>> descriptorSets;
+
 	static VulkanRenderer& GetInstance();
 };
 
@@ -73,5 +76,6 @@ bool hasStencilComponent(VkFormat format);
 void createGraphicsPipeline(int& index, const char* vertexShaderPath, const char* fragmentShaderPath);
 std::vector<char> readFile(const std::string& filename);
 VkShaderModule createShaderModule(const std::vector<char>& code);
-void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImageView * image, VkSampler * sampler);
+void createDescriptorSets(VkImageView * image, VkSampler * sampler, int& index);
 void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler);
+void createDescriptorPool();

@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "VulkanCore.h"
+#include <iostream>
 
 VkVertexInputBindingDescription Vertex::getBindingDescription()
 {
@@ -250,8 +251,9 @@ VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags a
 	viewInfo.subresourceRange.layerCount = 1;
 
 	VkImageView imageView;
-	if (vkCreateImageView(VulkanRenderer::GetInstance().device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	if (auto r = vkCreateImageView(VulkanRenderer::GetInstance().device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
 	{
+		std::cout << "error " << r << std::endl;
 		throw std::runtime_error("failed to create texture image view!");
 	}
 
@@ -636,9 +638,12 @@ void createGraphicsPipeline(int& index, const char* vertexShaderPath, const char
 	// add to list
 	VulkanRenderer::GetInstance().graphicsPipelines.push_back({});
 	index = VulkanRenderer::GetInstance().graphicsPipelines.size() - 1;
+	std::cout << "shader index " << index << std::endl;
 
-	if (vkCreateGraphicsPipelines(VulkanRenderer::GetInstance().device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &VulkanRenderer::GetInstance().graphicsPipelines[index]) != VK_SUCCESS)
+	VkResult r = vkCreateGraphicsPipelines(VulkanRenderer::GetInstance().device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &VulkanRenderer::GetInstance().graphicsPipelines[index]);
+	if (r != VK_SUCCESS)
 	{
+		std::cout << "vkCreateGraphicsPipelines " << r << std::endl;
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
@@ -681,8 +686,9 @@ VkShaderModule createShaderModule(const std::vector<char>& code)
 	return shaderModule;
 }
 
-void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImageView * image, VkSampler * sampler)
+void createDescriptorSets(VkImageView * image, VkSampler * sampler, int& index)
 {
+	int i = VulkanRenderer::GetInstance().descriptorSets.size();
 	std::vector<VkDescriptorSetLayout> layouts(VulkanRenderer::GetInstance().swapChainImages.size(), VulkanRenderer::GetInstance().descriptorSetLayout);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -690,6 +696,7 @@ void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImage
 	allocInfo.descriptorSetCount = static_cast<uint32_t>(VulkanRenderer::GetInstance().swapChainImages.size());
 	allocInfo.pSetLayouts = layouts.data();
 
+	std::vector<VkDescriptorSet>* descriptorSets = {};
 	descriptorSets->resize(VulkanRenderer::GetInstance().swapChainImages.size());
 	VkResult result = vkAllocateDescriptorSets(VulkanRenderer::GetInstance().device, &allocInfo, descriptorSets->data());
 	if (result != VK_SUCCESS)
@@ -701,6 +708,9 @@ void createDescriptorSets(std::vector<VkDescriptorSet> * descriptorSets, VkImage
 	{
 		UpdateDescriptorSets(descriptorSets, image, sampler);
 	}
+
+	VulkanRenderer::GetInstance().descriptorSets.push_back(*descriptorSets);
+	index = i;
 }
 
 void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler)
@@ -736,5 +746,25 @@ void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageV
 		descriptorWrites[1].pImageInfo = &imageInfo;
 
 		vkUpdateDescriptorSets(VulkanRenderer::GetInstance().device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
+}
+
+void createDescriptorPool()
+{
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = static_cast<uint32_t>(VulkanRenderer::GetInstance().swapChainImages.size() * 20);
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = static_cast<uint32_t>(VulkanRenderer::GetInstance().swapChainImages.size() * 20);
+
+	VkDescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = static_cast<uint32_t>(VulkanRenderer::GetInstance().swapChainImages.size() * 20);
+
+	if (vkCreateDescriptorPool(VulkanRenderer::GetInstance().device, &poolInfo, nullptr, &VulkanRenderer::GetInstance().descriptorPool) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create descriptor pool!");
 	}
 }

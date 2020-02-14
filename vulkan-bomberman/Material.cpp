@@ -7,7 +7,7 @@ Material::Material(Shader* shader, Texture* texture)
 	this->texture = texture;
 
 	// TODO create descriptor sets
-
+	createDescriptorSets(&texture->textureImageView, &texture->textureSampler, descriptorSetIndex);
 
 	descriptorSetIndex = -1; // TODO set proper index once we are able to create descriptor sets
 }
