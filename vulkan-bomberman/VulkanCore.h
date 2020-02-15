@@ -15,6 +15,7 @@
 #include "Vertex.h"
 #include <array>
 #include <cstdlib>
+#include <optional>
 
 struct UniformBufferObject
 {
@@ -23,13 +24,57 @@ struct UniformBufferObject
 	glm::mat4 proj;
 };
 
+const std::vector<const char*> deviceExtensions = {
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME
+};
+
+struct QueueFamilyIndices
+{
+	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> presentFamily;
+
+	inline bool isComplete()
+	{
+		return graphicsFamily.has_value() && presentFamily.has_value();
+	}
+};
+
+struct SwapChainSupportDetails
+{
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
+};
+
 class VulkanRenderer
 {
-public:
+private:
+	// DEBUG
+	VkDebugUtilsMessengerEXT debugMessenger;
+
+	// INSTANCE VARIABLES
+	GLFWwindow* window;
+	VkInstance instance;
+	VkSurfaceKHR surface;
+	VkQueue presentQueue;
+
+	VkSwapchainKHR swapChain;
+	VkFormat swapChainImageFormat;
+	std::vector<VkImageView> swapChainImageViews;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+
 	VkQueue graphicsQueue;
 	VkCommandPool commandPool;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device;
+
+	std::vector<VkSemaphore> imageAvailableSemaphores;
+	std::vector<VkSemaphore> renderFinishedSemaphores;
+	std::vector<VkFence> inFlightFences;
+	std::vector<VkFence> imagesInFlight;
+	size_t currentFrame = 0;
+
+	bool framebufferResized = false;
 
 	VkRenderPass renderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
@@ -46,7 +91,62 @@ public:
 	VkDescriptorPool descriptorPool;
 	std::vector<std::vector<VkDescriptorSet>> descriptorSets;
 
-	static VulkanRenderer& GetInstance();
+	std::vector<VkCommandBuffer> commandBuffers;
+
+	VkBuffer vertexBuffer;
+	VkDeviceMemory vertexBufferMemory;
+
+	VkBuffer indexBuffer;
+	VkDeviceMemory indexBufferMemory;
+
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
+
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
+
+	VkImage colorImage;
+	VkDeviceMemory colorImageMemory;
+	VkImageView colorImageView;
+
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+
+	// PRIVATE METHODS
+	void CreateInstance();
+	
+	bool CheckValidationLayerSupport();
+	void SetupDebugMessenger();
+	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+	static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
+	
+	std::vector<const char*> GetRequiredExtensions();
+	bool CheckExtensionSupport(std::vector<VkExtensionProperties> * extensions, uint32_t glfwExtensionCount, std::vector<const char*> glfwExtensions);
+
+	void CreateSurface();
+
+	void PickPhysicalDevice();
+	bool IsDeviceSuitable(VkPhysicalDevice device);
+	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+	bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
+	VkSampleCountFlagBits GetMaxUsableSampleCount();
+	SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+
+	void CreateLogicalDevice();
+
+	void CreateSwapChain();
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+	VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+	VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+
+public:
+	VulkanRenderer(GLFWwindow* window);
+	~VulkanRenderer();
+	void InitVulkan();
 };
 
 // Global functions
