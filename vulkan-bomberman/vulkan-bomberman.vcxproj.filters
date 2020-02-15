@@ -15,7 +15,7 @@
     </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{fe5cd8a9-b165-4e91-9621-7c0329221269}</UniqueIdentifier>
-	  <Extensions>vert;frag</Extensions>
+      <Extensions>vert;frag</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +64,9 @@
     <ClCompile Include="StringUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -106,6 +109,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

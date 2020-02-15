@@ -21,9 +21,6 @@ const int MAX_FRAMES_IN_FLIGHT = 2;
 const int WIDTH = 800;
 const int HEIGHT = 800;
 
-const std::string MODEL_PATH = "../models/chalet.obj";
-const std::string TEXTURE_PATH = "../textures/chalet.jpg";
-
 const std::vector<const char*> validationLayers = {
 "VK_LAYER_KHRONOS_validation"
 };
