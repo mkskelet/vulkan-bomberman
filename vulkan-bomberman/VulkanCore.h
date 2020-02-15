@@ -16,6 +16,8 @@
 #include <array>
 #include <cstdlib>
 #include <optional>
+#include "Material.h"
+#include "Sprite.h"
 
 struct UniformBufferObject
 {
@@ -74,8 +76,6 @@ private:
 	std::vector<VkFence> imagesInFlight;
 	size_t currentFrame = 0;
 
-	bool framebufferResized = false;
-
 	VkRenderPass renderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
@@ -112,6 +112,9 @@ private:
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
+	// RENDERING VARIABLES
+	std::map<int, Material*> spriteMaterialMap;
+
 	// PRIVATE METHODS
 	void CreateInstance();
 	
@@ -141,12 +144,38 @@ private:
 	VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+	void CreateSwapChainImageViews();
 
+	void CreateRenderPass();
+	VkFormat FindDepthFormat();
+	VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	void CreateDescriptorSetLayout();
+	void CreateCommandPool();
+	void CreateColorResources();
+	void CreateDepthResources();
+	void CreateFramebuffers();
+	void CreateUniformBuffers();
+	void CreateDescriptorPool();
+	void CreateSyncObjects();
+	void RecreateSwapChain();
+	void FillIndexBuffer();
+	bool RenderSprite(Sprite* sprite);
+	void CreateVertexBuffer();
+	void CreateIndexBuffer();
+	void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+	void DrawFrame();
+	void UpdateUniformBuffer(uint32_t currentImage);
+	void CreateCommandBuffers();
+	void CleanupSwapChain();
 
 public:
+	bool framebufferResized = false;
+
 	VulkanRenderer(GLFWwindow* window);
 	~VulkanRenderer();
 	void InitVulkan();
+	void Render();
+	inline VkDevice GetDevice() const { return device; }
 };
 
 // Global functions
