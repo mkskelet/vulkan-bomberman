@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "TextureDatabase.h"
 #include "VulkanApp.h"
+#include "Say.h"
 
 Material::Material(Shader* shader, Texture* texture)
 {
@@ -8,6 +9,8 @@ Material::Material(Shader* shader, Texture* texture)
 	this->texture = texture;
 
 	VulkanApp::GetRenderer()->CreateDescriptorSets(&texture->textureImageView, &texture->textureSampler, descriptorSetIndex);
+
+	Say::LogIf(texture != nullptr, "Create material for", texture->GetPath(), "(mat index:", descriptorSetIndex, ")");
 }
 
 Material::~Material()

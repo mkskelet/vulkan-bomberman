@@ -126,6 +126,9 @@
     <ClInclude Include="FileUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Say.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\shader.frag">
