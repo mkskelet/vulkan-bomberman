@@ -772,7 +772,7 @@ void Level::KeyPress(int key)
 
 void Level::SpecialKeyPress(int key)
 {
-	p1->SpecialKeyPress(key);
+	
 }
 
 void Level::KeyRelease(int key)
@@ -828,5 +828,5 @@ void Level::PlantBomb(Player* player, std::vector<Bomb*>& bombs)
 
 void Level::SpecialKeyRelease(int key)
 {
-	p1->SpecialKeyRelease(key);
+	
 }

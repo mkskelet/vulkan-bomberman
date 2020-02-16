@@ -14,8 +14,8 @@ class Player : public Character
 {
 private:
 	bool loaded;						///< Signals if player was already loaded.
-	bool* keyStates;					///< Keyboard signals.
-	bool* specialKeyStates;				///< Special keys.
+	/*bool* keyStates;					///< Keyboard signals.
+	bool* specialKeyStates;				///< Special keys.*/
 	bool move;
 	int controls;						///< Determines which controls to use (PLAYER_ONE or PLAYER_TWO)
 	Direction dir;						///< Direction of movement
@@ -25,16 +25,18 @@ private:
 	int bombCount;					///< Maximum number of bombs that player can plant at once.	
 	int bombRange;					///< Maximum range of bomb explosion.
 	bool remote;						///< Signals if remote fire is enabled.
+	
+	std::map<int, bool> keyMap;
+	bool IsKeyPressed(int key);
+
 public:
 	Player();
 	~Player();
 	Player(int playerNumber, CharacterType characterType, float speed, float collisionDetectionRange, glm::vec3 position, glm::vec2 size, glm::vec2 pivot, Material* material);
 	void Start();
 	void Update();
-	void KeyPress(unsigned char key);
-	void SpecialKeyPress(int key);
-	void KeyRelease(unsigned char key);
-	void SpecialKeyRelease(int key);
+	void KeyPress(int key);
+	void KeyRelease(int key);
 	void UpdateCharacterColisions(std::vector<Enemy*> colliders);			///< Updates the character colision flags.
 	void UpdatePortalColision(Portal* collider);								///< Updates portal collider.
 	bool IsInPortal();												///< Check collision with portal.

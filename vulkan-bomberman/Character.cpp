@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Say.h"
 
 Character::Character() : characterType(PlayerCharacter), speed(5.0f), collisionDetectionRange(5), colliding(false), alive(true)
 {
@@ -39,7 +40,6 @@ void Character::Translate(glm::vec2 translation)
 			colliders[i]->GetPosition().y - colliders[i]->GetScale().y > newPos.y;
 		if (!notColliding)
 		{
-			//cout << "COLLISION\n";
 			newPos = GetPosition();
 			colliding = true;
 			break;
@@ -47,6 +47,7 @@ void Character::Translate(glm::vec2 translation)
 		else colliding = false;
 	}
 
+	Say::Log("- Character move", GetPosition().x, GetPosition().y, "->", newPos.x, newPos.y);
 	SetPosition(newPos);
 }
 

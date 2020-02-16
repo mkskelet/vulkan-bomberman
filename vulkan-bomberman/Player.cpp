@@ -2,14 +2,6 @@
 
 Player::Player() : loaded(false)
 {
-	keyStates = new bool[256];
-	for (int i = 0; i < 256; i++)
-		keyStates[i] = false;
-
-	specialKeyStates = new bool[256];
-	for (int i = 0; i < 256; i++)
-		specialKeyStates[i] = false;
-
 	bombCount = 1;
 	bombRange = 3;
 	remote = false;
@@ -24,13 +16,6 @@ Player::Player(int playerNumber, CharacterType characterType, float speed, float
 	dir = UpD;
 	move = false;
 	loaded = false;
-	keyStates = new bool[256];
-	for (int i = 0; i < 256; i++)
-		keyStates[i] = false;
-
-	specialKeyStates = new bool[256];
-	for (int i = 0; i < 256; i++)
-		specialKeyStates[i] = false;
 
 	bombCount = 1;
 	bombRange = 3;
@@ -57,25 +42,25 @@ void Player::Update()
 
 	if (controls == PLAYER_TWO)
 	{
-		if (keyStates['e'])
+		if (IsKeyPressed(GLFW_KEY_E))
 			movement = glm::vec2(0, 1);
-		else if (keyStates['d'])
+		else if (IsKeyPressed(GLFW_KEY_D))
 			movement = glm::vec2(0, -1);
-		else if (keyStates['s'])
+		else if (IsKeyPressed(GLFW_KEY_S))
 			movement = glm::vec2(-1, 0);
-		else if (keyStates['f'])
+		else if (IsKeyPressed(GLFW_KEY_F))
 			movement = glm::vec2(1, 0);
 	}
 
 	if (controls == PLAYER_ONE)
 	{
-		if (specialKeyStates[GLFW_KEY_UP])
+		if (IsKeyPressed(GLFW_KEY_UP))
 			movement = glm::vec2(0, 1);
-		else if (specialKeyStates[GLFW_KEY_DOWN])
+		else if (IsKeyPressed(GLFW_KEY_DOWN))
 			movement = glm::vec2(0, -1);
-		else if (specialKeyStates[GLFW_KEY_LEFT])
+		else if (IsKeyPressed(GLFW_KEY_LEFT))
 			movement = glm::vec2(-1, 0);
-		else if (specialKeyStates[GLFW_KEY_RIGHT])
+		else if (IsKeyPressed(GLFW_KEY_RIGHT))
 			movement = glm::vec2(1, 0);
 	}
 
@@ -100,32 +85,29 @@ void Player::Update()
 	__super::Update();
 }
 
-void Player::KeyPress(unsigned char key)
+bool Player::IsKeyPressed(int key)
 {
-	if (!loaded) return;
+	auto it = keyMap.find(key);
 
-	keyStates[key] = true;
+	if (it != keyMap.end())
+	{
+		return it->second;
+	}
+	return false;
 }
 
-void Player::SpecialKeyPress(int key)
+void Player::KeyPress(int key)
 {
 	if (!loaded) return;
 
-	specialKeyStates[key] = true;
+	keyMap[key] = true;
 }
 
-void Player::SpecialKeyRelease(int key)
+void Player::KeyRelease(int key)
 {
 	if (!loaded) return;
 
-	specialKeyStates[key] = false;
-}
-
-void Player::KeyRelease(unsigned char key)
-{
-	if (!loaded) return;
-
-	keyStates[key] = false;
+	keyMap[key] = false;
 }
 
 void Player::UpdateCharacterColisions(std::vector<Enemy*> colliders)
