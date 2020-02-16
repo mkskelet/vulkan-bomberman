@@ -1193,7 +1193,7 @@ void VulkanRenderer::CreateCommandBuffers()
 				{
 					if (pendingMat != nullptr && index != pendingIndex)
 					{
-						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[mat->GetDescriptorSetIndex()][i], 0, nullptr);
+						vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[pendingMat->GetDescriptorSetIndex()][i], 0, nullptr);
 						vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(index - pendingIndex), 1, pendingIndex, 0, 0);
 					}
 
