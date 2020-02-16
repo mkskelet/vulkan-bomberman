@@ -1,4 +1,5 @@
 #include "TextureDatabase.h"
+#include "Say.h"
 
 void TextureDatabase::ReleaseTextures()
 {
@@ -18,6 +19,7 @@ void TextureDatabase::ReleaseTexture(Texture* texture)
 
 			if (tex->GetRefCount() <= 0)
 			{
+				Say::Log("Releasing texture", path != nullptr ? path : "null");
 				delete tex;
 				textures.erase(path);
 			}

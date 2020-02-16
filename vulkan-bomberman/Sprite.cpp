@@ -72,7 +72,6 @@ void Sprite::RemoveFromMap(Sprite* sprite)
 		{
 			Material* mat = it->first;
 			spriteMap.erase(mat);
-			delete mat;
 			//std::cout << "erasing texture from sprite map: " << ((sprite->GetTexture() == nullptr) ? "null" : sprite->GetTexture()->GetPath()) << std::endl;
 		}
 	}

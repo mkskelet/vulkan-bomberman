@@ -35,11 +35,15 @@ private:
 	Sprite controlsBox;
 	Sprite arrowPrev;
 	Sprite arrowNext;
-	std::vector<Sprite> mapPreview;		///< Map preview.
+	std::vector<Sprite*> mapPreview;		///< Map preview.
 	int previewMapIndex;				///< Index of current map.
 
 	// map preview materials
 	std::vector<Material*> materials;
+
+	void SetMenuVisibility(bool visible);
+	void SetLevelPreviewVisibility(bool visible);
+	void ClearMapPreview();
 
 public:
 	MainMenu();
@@ -48,6 +52,6 @@ public:
 	void Update();
 	void KeyPress(int key);
 	void Start();
-	void OnWindowResized();
+	void OnWindowResized(); // FIXME remove
 	void LoadMapPreview();						///< Method loads preview map.
 };
