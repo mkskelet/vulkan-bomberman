@@ -168,6 +168,18 @@ private:
 	void CreateCommandBuffers();
 	void CleanupSwapChain();
 
+	void GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
+	void CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+	VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+	VkCommandBuffer BeginSingleTimeCommands();
+	void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+	void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+	void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	bool HasStencilComponent(VkFormat format);
+	VkShaderModule CreateShaderModule(const std::vector<char>& code);
+
 public:
 	bool framebufferResized = false;
 
@@ -176,24 +188,14 @@ public:
 	void InitVulkan();
 	void Render();
 	inline VkDevice GetDevice() const { return device; }
-};
 
-// Global functions
-void createTextureImage(const char* path, VkImage* image, VkDeviceMemory* imageMemory, bool useMipMaps = false, uint32_t* mipLevels = nullptr);
-void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
-void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-void createTextureImageView(VkImageView* imageView, VkImage* image, uint32_t mipLevels);
-VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-void createTextureSampler(VkSampler* sampler, uint32_t mipLevels);
-VkCommandBuffer beginSingleTimeCommands();
-void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
-void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-bool hasStencilComponent(VkFormat format);
-void createGraphicsPipeline(int& index, const char* vertexShaderPath, const char* fragmentShaderPath);
-std::vector<char> readFile(const std::string& filename);
-VkShaderModule createShaderModule(const std::vector<char>& code);
-void createDescriptorSets(VkImageView * image, VkSampler * sampler, int& index);
-void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler);
+	// texture creation
+	void CreateTextureImage(const char* path, VkImage* image, VkDeviceMemory* imageMemory, bool useMipMaps = false, uint32_t* mipLevels = nullptr);
+	void CreateTextureImageView(VkImageView* imageView, VkImage* image, uint32_t mipLevels);
+	void CreateTextureSampler(VkSampler* sampler, uint32_t mipLevels);
+
+	// shaders and material creation
+	void CreateGraphicsPipeline(int& index, const char* vertexShaderPath, const char* fragmentShaderPath);
+	void CreateDescriptorSets(VkImageView* image, VkSampler* sampler, int& index);
+	void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler);
+};

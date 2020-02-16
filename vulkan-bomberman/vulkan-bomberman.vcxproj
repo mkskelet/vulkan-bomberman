@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -34,10 +35,12 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureDatabase.cpp" />
     <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="VulkanApp.cpp" />
     <ClCompile Include="VulkanCore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />
@@ -51,6 +54,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureDatabase.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VulkanApp.h" />
     <ClInclude Include="VulkanCore.h" />
   </ItemGroup>
   <ItemGroup>
