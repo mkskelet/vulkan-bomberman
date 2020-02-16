@@ -2,6 +2,7 @@
 #include "TextureDatabase.h"
 #include <iostream>
 #include "Say.h"
+#include "PlayerPrefs.h"
 
 //block texture IDs
 #define PREVIEW_BLOCK_BACKGROUND 0
@@ -71,6 +72,7 @@ mapName("")
 	controlsBox.SetColor(0, 0, 0.8f);
 	controlsBox.SetMaterial(material);
 	Sprite::AddToMap(&controlsBox);
+	controlsBox.SetVisible(false);
 
 	// preview
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/ls_back.tga");
@@ -123,22 +125,17 @@ mapName("")
 	materials[PREVIEW_BLOCK_PORTAL] = material;
 }
 
-/// Function to render scene.
-void MainMenu::Render()
-{
-
-}
-
 /// Method called when scene is created. 
 void MainMenu::Start()
 {
-	showControls = true;
-	/*if (PlayerPrefs::GetBool("First run", true))
+	if (PlayerPrefs::GetBool("First run", true))
 	{
 		showControls = true;
+		controlsBox.SetVisible(true);
 		PlayerPrefs::SetBool("First run", false);
-	}*/
-	OnWindowResized();
+	}
+
+	Say::Log("Main Menu start", showControls);
 }
 
 /// Function to update scene.
@@ -168,8 +165,6 @@ void MainMenu::Update()
 	}
 	else
 	{
-		//Say::Log("no show main menu");
-
 		// print map name
 		float w = 1.0f;
 		float h = 1.0f;
@@ -206,13 +201,6 @@ void MainMenu::Update()
 		}
 		glColor3f(1.0f, 1.0f, 1.0f);*/
 
-		// print map
-		/*if (mapPreview.size() > 0)
-		{
-			for (int i = 0; i < mapPreview.size(); i++)
-				mapPreview[i].Render();
-		}*/
-
 		// print navigation arrows
 		if (previewMapIndex == 0)
 		{
@@ -228,14 +216,6 @@ void MainMenu::Update()
 			//arrowNext.Render();
 		}
 	}
-}
-
-/// Method called whenever window has been resized
-void MainMenu::OnWindowResized()
-{
-	
-
-	//LoadMapPreview();
 }
 
 /// Method called when key is pressed

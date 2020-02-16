@@ -15,12 +15,6 @@ int Scene::GetNextScene()
 	return nextScene;
 }
 
-/// Method called when redraw is needed.
-void Scene::Render()
-{
-
-}
-
 /// Method called every frame.
 void Scene::Update()
 {
@@ -56,12 +50,6 @@ void Scene::SwitchScene(int newIndex)
 bool Scene::IsSwitchingScene()
 {
 	return switchScene;
-}
-
-/// Method called after window has been resized
-void Scene::OnWindowResized()
-{
-
 }
 
 void Scene::KeyRelease(int key)

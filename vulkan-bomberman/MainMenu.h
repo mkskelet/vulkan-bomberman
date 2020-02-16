@@ -48,10 +48,8 @@ private:
 public:
 	MainMenu();
 	std::string GetMapName() { return mapName; }	///< Method returns name of the map selected by player.
-	void Render();								///< Method renders main menu.		
 	void Update();
 	void KeyPress(int key);
 	void Start();
-	void OnWindowResized(); // FIXME remove
 	void LoadMapPreview();						///< Method loads preview map.
 };
