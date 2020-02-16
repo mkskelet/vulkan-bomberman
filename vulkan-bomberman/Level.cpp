@@ -82,7 +82,7 @@ void Level::Update()
 	{
 		// saev score
 		if (!playerWon && map.GetSinglePlayer())
-			PlayerPrefs::SetInt(map.GetName(), timeRemaining);
+			PlayerPrefs::SetInt(map.GetName(), static_cast<int>(timeRemaining));
 		playerWon = true;
 	}
 	if (!map.GetSinglePlayer() && map.GetSinglePlayer() && p1->IsInPortal() && portal->GetUnlocked())
@@ -183,13 +183,13 @@ void Level::HandleBombExplosions(std::vector<Bomb*>& bombs)
 							if (solidBlocks[k]->GetPosition().x <= next.x + 2 && solidBlocks[k]->GetPosition().x >= next.x - 2
 								&& solidBlocks[k]->GetPosition().y <= next.y + 2 && solidBlocks[k]->GetPosition().y >= next.y - 2)
 							{
-								if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+								if (IsBlockExplodable(solidBlocks[i]))
 								{
 									indexToDestroy.push_back(k);
 									skip = true;
 									break;
 								}
-								else if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_SOLID)
+								else if (IsBlockSolid(solidBlocks[i]))
 								{
 									explosions.erase(explosions.begin() + explosions.size() - 1);
 									skip = true;
@@ -222,13 +222,13 @@ void Level::HandleBombExplosions(std::vector<Bomb*>& bombs)
 							if (solidBlocks[k]->GetPosition().x <= next.x + 2 && solidBlocks[k]->GetPosition().x >= next.x - 2
 								&& solidBlocks[k]->GetPosition().y <= next.y + 2 && solidBlocks[k]->GetPosition().y >= next.y - 2)
 							{
-								if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+								if (IsBlockExplodable(solidBlocks[i]))
 								{
 									indexToDestroy.push_back(k);
 									skip = true;
 									break;
 								}
-								else if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_SOLID)
+								else if (IsBlockSolid(solidBlocks[i]))
 								{
 									explosions.erase(explosions.begin() + explosions.size() - 1);
 									skip = true;
@@ -261,13 +261,13 @@ void Level::HandleBombExplosions(std::vector<Bomb*>& bombs)
 							if (solidBlocks[k]->GetPosition().x <= next.x + 2 && solidBlocks[k]->GetPosition().x >= next.x - 2
 								&& solidBlocks[k]->GetPosition().y <= next.y + 2 && solidBlocks[k]->GetPosition().y >= next.y - 2)
 							{
-								if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+								if (IsBlockExplodable(solidBlocks[i]))
 								{
 									indexToDestroy.push_back(k);
 									skip = true;
 									break;
 								}
-								else if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_SOLID)
+								else if (IsBlockSolid(solidBlocks[i]))
 								{
 									explosions.erase(explosions.begin() + explosions.size() - 1);
 									skip = true;
@@ -300,13 +300,13 @@ void Level::HandleBombExplosions(std::vector<Bomb*>& bombs)
 							if (solidBlocks[k]->GetPosition().x <= next.x + 2 && solidBlocks[k]->GetPosition().x >= next.x - 2
 								&& solidBlocks[k]->GetPosition().y <= next.y + 2 && solidBlocks[k]->GetPosition().y >= next.y - 2)
 							{
-								if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+								if (IsBlockExplodable(solidBlocks[i]))
 								{
 									indexToDestroy.push_back(k);
 									skip = true;
 									break;
 								}
-								else if (solidBlocks[k]->GetTextureID() == LEVEL_BLOCK_SOLID)
+								else if (IsBlockSolid(solidBlocks[i]))
 								{
 									explosions.erase(explosions.begin() + explosions.size() - 1);
 									skip = true;
@@ -350,7 +350,7 @@ void Level::Start()
 	{
 		for (unsigned int i = 0; i < solidBlocks.size(); i++)
 		{
-			if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+			if (IsBlockExplodable(solidBlocks[i]))
 				maxIndex++;
 		}
 	}
@@ -366,7 +366,7 @@ void Level::Start()
 		{
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == portalIndex)
 					{
@@ -398,7 +398,7 @@ void Level::Start()
 			int tempIndex = 0;
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == powerupIndex)
 					{
@@ -436,7 +436,7 @@ void Level::Start()
 			int tempIndex = 0;
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == powerupIndex)
 					{
@@ -474,7 +474,7 @@ void Level::Start()
 			int tempIndex = 0;
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == powerupIndex)
 					{
@@ -512,7 +512,7 @@ void Level::Start()
 			int tempIndex = 0;
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == powerupIndex)
 					{
@@ -550,7 +550,7 @@ void Level::Start()
 			int tempIndex = 0;
 			for (unsigned int i = 0; i < solidBlocks.size(); i++)
 			{
-				if (solidBlocks[i]->GetTextureID() == LEVEL_BLOCK_EXPLODABLE)
+				if (IsBlockExplodable(solidBlocks[i]))
 				{
 					if (tempIndex == powerupIndex)
 					{
@@ -571,6 +571,24 @@ void Level::Start()
 			freee = true;
 		} while (freee != true);
 	}
+}
+
+bool Level::IsBlockExplodable(Sprite* block)
+{
+	if (strcmp(block->GetMaterial()->GetTexture()->GetPath(), "../sprites/blocks/ExplodableBlock.tga"))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Level::IsBlockSolid(Sprite* block)
+{
+	if (strcmp(block->GetMaterial()->GetTexture()->GetPath(), "../sprites/blocks/SolidBlock.tga"))
+	{
+		return true;
+	}
+	return false;
 }
 
 void Level::GenerateLevel()

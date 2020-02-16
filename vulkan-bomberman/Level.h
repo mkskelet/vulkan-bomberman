@@ -26,8 +26,8 @@ private:
 	std::vector<Bomb*> bombs1;			///< bombs belonging to player1
 	std::vector<Bomb*> bombs2;			///< bombs belonging to player2
 	std::vector<Enemy*> ai;				///< finally render characters
-	long levelTime;					///< time when level ends
-	int timeRemaining;
+	float levelTime;					///< time when level ends
+	float timeRemaining;
 	Map map;
 	Sprite topBar;
 	Sprite endGame;
@@ -42,6 +42,8 @@ private:
 
 	void HandleBombExplosions(std::vector<Bomb*>& bombs);
 	void PlantBomb(Player* player, std::vector<Bomb*>& bombs);
+	bool IsBlockExplodable(Sprite* block);
+	bool IsBlockSolid(Sprite* block);
 
 public:
 	static std::string levelName;
