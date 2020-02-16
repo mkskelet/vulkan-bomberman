@@ -37,6 +37,10 @@ private:
 	Sprite arrowNext;
 	std::vector<Sprite> mapPreview;		///< Map preview.
 	int previewMapIndex;				///< Index of current map.
+
+	// map preview materials
+	std::vector<Material*> materials;
+
 public:
 	MainMenu();
 	std::string GetMapName() { return mapName; }	///< Method returns name of the map selected by player.
@@ -45,5 +49,5 @@ public:
 	void KeyPress(int key);
 	void Start();
 	void OnWindowResized();
-	//void LoadMapPreview();						///< Method loads preview map.
+	void LoadMapPreview();						///< Method loads preview map.
 };

@@ -1,27 +1,17 @@
 #include "MainMenu.h"
 #include "TextureDatabase.h"
 #include <iostream>
+#include "Say.h"
 
-// menu texture IDs 2-10
-#define MAINMENU_BACKGROUND 2
-#define MAINMENU_1PLAYER_NORMAL 3
-#define MAINMENU_2PLAYERS_NORMAL 4
-#define MAINMENU_EXIT 5
-#define MAINMENU_CONTROLS 6
-#define LEVELSELECT_NEXT 7
-#define LEVELSELECT_BACK 8
-#define LEVELSELECT_MENU 9
-#define MAINMENU_CONTROLS_BOX 10
-
-//block texture IDs 11-15
-#define PREVIEW_BLOCK_BACKGROUND 11
-#define PREVIEW_BLOCK_SOLID 12
-#define PREVIEW_BLOCK_EXPLODABLE 13
-#define PREVIEW_BLOCK_BOMBERMAN 14
-#define PREVIEW_BLOCK_CREEP 15
-#define PREVIEW_BLOCK_BOMB 16
-#define PREVIEW_BLOCK_EXPLOSION 17
-#define PREVIEW_BLOCK_PORTAL 18
+//block texture IDs
+#define PREVIEW_BLOCK_BACKGROUND 0
+#define PREVIEW_BLOCK_SOLID 1
+#define PREVIEW_BLOCK_EXPLODABLE 2
+#define PREVIEW_BLOCK_BOMBERMAN 3
+#define PREVIEW_BLOCK_CREEP 4
+#define PREVIEW_BLOCK_BOMB 5
+#define PREVIEW_BLOCK_EXPLOSION 6
+#define PREVIEW_BLOCK_PORTAL 7
 
 /// Constructor for main menu scene, sets player count and ai count to lowest needed for the game to start.
 MainMenu::MainMenu() : Scene(SCENE_MAIN_MENU),
@@ -32,8 +22,42 @@ showControls(false),
 menuPosition(SINGLE_PLAYER),
 mapName("")
 {
-	// initializing sprites, all this stuff has to be in OnWindowResized() function if we wanna have responsive design
-	//OnWindowResized();
+	Shader* shader = Shader::Find("uber");
+
+	// allocate materials
+	materials.resize(8);
+
+	Texture* texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/BackgroundTile.tga");
+	Material* mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_BACKGROUND] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/SolidBlock.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_SOLID] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/ExplodableBlock.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_EXPLODABLE] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Bman_F_f00.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_BOMBERMAN] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Creep_F_f00.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_CREEP] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Bomb.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_BOMB] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Flame.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_EXPLOSION] = mat;
+
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Portal.tga");
+	mat = new Material(shader, texture);
+	materials[PREVIEW_BLOCK_PORTAL] = mat;
 }
 
 /// Function to render scene.
@@ -74,10 +98,6 @@ void MainMenu::Update()
 			controlsButton.SetColor(0.8f, 0, 0);
 		else controlsButton.SetColor(0.8f, 0.8f, 0);
 
-		// draw controls box
-		/*if (showControls)
-			controlsBox.Render();*/
-
 			// draw exit button
 		if (menuPosition == MENU_EXIT)
 			exitButton.SetColor(0.8f, 0, 0);
@@ -85,6 +105,8 @@ void MainMenu::Update()
 	}
 	else
 	{
+		//Say::Log("no show main menu");
+
 		// print map name
 		float w = 1.0f;
 		float h = 1.0f;
@@ -209,6 +231,7 @@ void MainMenu::OnWindowResized()
 	arrowNext = Sprite(glm::vec3(w - 10 - buttonWidth / 2, h / 2 + buttonHeight / 2, 10.0f), glm::vec2(buttonWidth / 2, buttonHeight / 2), glm::vec2(0.0f, 1.0f));
 	arrowNext.SetMaterial(material);
 	Sprite::AddToMap(&arrowNext);
+
 	//LoadMapPreview();
 }
 
@@ -234,11 +257,12 @@ void MainMenu::KeyPress(int key)
 				//Level::levelName = mapLoader.LoadMap(mapLoader.GetMapList(singlePlayer)[previewMapIndex]).GetName();
 				//Map m = mapLoader.LoadMap(Level::levelName);
 				//SwitchScene(SCENE_LEVEL);
-				std::cout << "Load level";
+				Say::Log("Load level");
 			}
 
+			Say::Log("showMainMenu = false");
 			showMainMenu = false;
-			//LoadMapPreview();
+			LoadMapPreview();
 			break;
 		}
 
@@ -265,7 +289,7 @@ void MainMenu::KeyPress(int key)
 			if (mapLoader.GetMapList(singlePlayer).size() > (previewMapIndex + 1))
 			{
 				previewMapIndex++;
-				//LoadMapPreview();
+				LoadMapPreview();
 			}
 		}
 		else if (key == GLFW_KEY_LEFT)
@@ -273,7 +297,7 @@ void MainMenu::KeyPress(int key)
 			if (previewMapIndex > 0)
 			{
 				previewMapIndex--;
-				//LoadMapPreview();
+				LoadMapPreview();
 			}
 			else
 			{
@@ -284,91 +308,92 @@ void MainMenu::KeyPress(int key)
 	}
 }
 
-//void MainMenu::LoadMapPreview()
-//{
-//	// clear map
-//	mapPreview.clear();
-//
-//	float w = (float)glutGet(GLUT_WINDOW_WIDTH);
-//	float h = (float)glutGet(GLUT_WINDOW_HEIGHT);
-//	Vector2 boundaries(w / 2, h / 2);
-//
-//	// return if there are no maps with specified index
-//	if (mapLoader.GetMapList(singlePlayer).size() <= previewMapIndex)
-//		return;
-//
-//	// get map
-//	Map map;
-//	map = mapLoader.LoadMap(mapLoader.GetMapList(singlePlayer)[previewMapIndex]);
-//
-//	float xCount = map.GetX();
-//	float yCount = map.GetY();
-//	float xOffset = 0;
-//	float yOffset = 0;
-//
-//	// calculate block size and offsets
-//	float blockSize = boundaries.Y() / yCount;
-//	if (blockSize * xCount <= boundaries.X())
-//	{
-//		xOffset = (boundaries.X() - (blockSize * xCount)) / 2;
-//	}
-//	else
-//	{
-//		blockSize = boundaries.X() / xCount;
-//		yOffset = (boundaries.Y() - (blockSize * yCount)) / 2;
-//	}
-//
-//	// clear mapPreview
-//	mapPreview.clear();
-//
-//	// fill mapPreview
-//	int c = 0;
-//	for (int i = 0; i < map.GetY(); i++)
-//	{
-//		for (int j = 0; j < map.GetX(); j++)
-//		{
-//			int texture = PREVIEW_BLOCK_BACKGROUND;
-//			bool drawBackground = false;
-//			// switch to determine texture, block type accessed by map[c++]
-//			int b = map[c++];
-//			switch (b)
-//			{
-//			case BLOCK_SPACE:
-//				texture = PREVIEW_BLOCK_BACKGROUND;
-//				break;
-//			case BLOCK_SOLID:
-//				texture = PREVIEW_BLOCK_SOLID;
-//				break;
-//			case BLOCK_EXPLODABLE:
-//				texture = PREVIEW_BLOCK_EXPLODABLE;
-//				break;
-//			case BLOCK_PLAYER:
-//				texture = PREVIEW_BLOCK_BOMBERMAN;
-//				drawBackground = true;
-//				break;
-//			default:
-//				if (b >= 0 && b <= 9)
-//					texture = PREVIEW_BLOCK_CREEP;
-//				drawBackground = true;
-//				break;
-//			}
-//
-//			if (drawBackground)
-//				mapPreview.push_back(
-//					Sprite(
-//						Vector2(xOffset + (boundaries.X() / 2) + j * blockSize, h - (boundaries.Y() / 2) - i * blockSize - yOffset),
-//						Vector2(blockSize, blockSize),
-//						PREVIEW_BLOCK_BACKGROUND
-//					)
-//				);
-//
-//			mapPreview.push_back(
-//				Sprite(
-//					Vector2(xOffset + (boundaries.X() / 2) + j * blockSize, h - (boundaries.Y() / 2) - i * blockSize - yOffset),
-//					Vector2(blockSize, blockSize),
-//					texture
-//				)
-//			);
-//		}
-//	}
-//}
+void MainMenu::LoadMapPreview()
+{
+	Say::Log("->LoadMapPreview", singlePlayer ? "sp" : "mp", previewMapIndex);
+
+	// clear map
+	mapPreview.clear();
+
+	float w = 1.0f;
+	float h = 1.0f;
+	glm::vec2 boundaries(w / 2, h / 2);
+
+	// return if there are no maps with specified index
+	if (mapLoader.GetMapList(singlePlayer).size() <= previewMapIndex)
+		return;
+
+	// get map
+	Map map;
+	map = mapLoader.LoadMap(mapLoader.GetMapList(singlePlayer)[previewMapIndex]);
+
+	float xCount = map.GetX();
+	float yCount = map.GetY();
+	float xOffset = 0;
+	float yOffset = 0;
+
+	// calculate block size and offsets
+	float blockSize = boundaries.y / yCount;
+	if (blockSize * xCount <= boundaries.x)
+	{
+		xOffset = (boundaries.x - (blockSize * xCount)) / 2;
+	}
+	else
+	{
+		blockSize = boundaries.x / xCount;
+		yOffset = (boundaries.x - (blockSize * yCount)) / 2;
+	}
+
+	// fill mapPreview
+	int c = 0;
+	for (int i = 0; i < map.GetY(); i++)
+	{
+		for (int j = 0; j < map.GetX(); j++)
+		{
+			int texture = PREVIEW_BLOCK_BACKGROUND;
+			bool drawBackground = false;
+			// switch to determine texture, block type accessed by map[c++]
+			int b = map[c++];
+			switch (b)
+			{
+			case BLOCK_SPACE:
+				texture = PREVIEW_BLOCK_BACKGROUND;
+				break;
+			case BLOCK_SOLID:
+				texture = PREVIEW_BLOCK_SOLID;
+				break;
+			case BLOCK_EXPLODABLE:
+				texture = PREVIEW_BLOCK_EXPLODABLE;
+				break;
+			case BLOCK_PLAYER:
+				texture = PREVIEW_BLOCK_BOMBERMAN;
+				drawBackground = true;
+				break;
+			default:
+				if (b >= 0 && b <= 9)
+					texture = PREVIEW_BLOCK_CREEP;
+				drawBackground = true;
+				break;
+			}
+
+			glm::vec3 position = glm::vec3(xOffset + (boundaries.x / 2) + j * blockSize, h - (boundaries.y / 2) - i * blockSize - yOffset, 5.0f);
+			glm::vec2 scale = glm::vec2(blockSize, blockSize);
+			glm::vec2 pivot = glm::vec2(0.0f, 1.0f);
+
+			if (drawBackground)
+			{
+				Sprite* bkg = new Sprite(position, scale, pivot);
+				bkg->SetMaterial(materials[PREVIEW_BLOCK_BACKGROUND]);
+				Sprite::AddToMap(bkg);
+
+				mapPreview.push_back(*bkg);
+			}
+
+			Sprite* s = new Sprite(position, scale, pivot);
+			s->SetMaterial(materials[texture]);
+			Sprite::AddToMap(s);
+
+			mapPreview.push_back(*s);
+		}
+	}
+}
