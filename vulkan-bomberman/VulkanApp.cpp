@@ -103,6 +103,13 @@ static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
 	app->GetRenderer()->framebufferResized = true;
 }
 
+VulkanApp* VulkanApp::instance = nullptr;
+
+VulkanApp::VulkanApp()
+{
+	instance = this;
+}
+
 void VulkanApp::Run()
 {
 	InitWindow();
@@ -182,13 +189,7 @@ void VulkanApp::Cleanup()
 	glfwTerminate();
 }
 
-VulkanApp& VulkanApp::GetInstance()
-{
-	static VulkanApp instance;
-	return instance;
-}
-
 VulkanRenderer* VulkanApp::GetRenderer()
 {
-	return GetInstance().renderer;
+	return instance->renderer;
 }

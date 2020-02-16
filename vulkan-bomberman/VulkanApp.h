@@ -5,6 +5,7 @@
 class VulkanApp
 {
 private:
+	static VulkanApp* instance;
 	GLFWwindow* window;
 	VulkanRenderer* renderer;
 
@@ -14,7 +15,10 @@ private:
 	void Cleanup();
 
 public:
+	VulkanApp();
+	~VulkanApp() {}
+
 	void Run();
-	static VulkanApp& GetInstance();
+	static VulkanApp* GetInstance() { return instance; }
 	static VulkanRenderer* GetRenderer();
 };
