@@ -24,6 +24,9 @@ std::string Level::levelName = "";
 Level::Level() : Scene(SCENE_LEVEL), loaded(false), playerWon(false)
 {
 	timeRemaining = 1000000;
+	portal = new Portal();
+	p1 = nullptr;
+	p2 = nullptr;
 }
 
 void Level::LoadLevel()
@@ -71,11 +74,14 @@ void Level::Update()
 	p2->UpdatePortalColision(portal);
 	p2->Update();
 
-	p1->UpdateGeneralColisions(solidBlocks);
-	p1->UpdateCharacterColisions(ai);
-	p1->UpdateExplosionColisions(explosions);
-	p1->UpdatePortalColision(portal);
-	p1->Update();
+	if (p1 != nullptr)
+	{
+		p1->UpdateGeneralColisions(solidBlocks);
+		p1->UpdateCharacterColisions(ai);
+		p1->UpdateExplosionColisions(explosions);
+		p1->UpdatePortalColision(portal);
+		p1->Update();
+	}
 
 	// check portal colision
 	if (map.GetSinglePlayer() && p2->IsInPortal() && portal->GetUnlocked())
@@ -101,6 +107,7 @@ void Level::Update()
 			}
 		}
 		if (!map.GetSinglePlayer())
+		{
 			for (int i = powerups.size() - 1; i >= 0; i--)
 			{
 				if (p1->PickPowerup(powerups[i]))
@@ -108,6 +115,7 @@ void Level::Update()
 					powerups.erase(powerups.begin() + i);
 				}
 			}
+		}
 	}
 
 	HandleBombExplosions(bombs1);
@@ -615,13 +623,13 @@ void Level::GenerateLevel()
 	Sprite::AddToMap(&endGame);
 
 	endGameP1 = Sprite(glm::vec3(0, h / 3 * 2, LAYER_UI_BOTTOM), glm::vec2(w, h / 3), topLeftPivot);
-	texture = TextureDatabase::GetInstance().GetTexture("../sprites/p1->tga");
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/P1.tga");
 	material = new Material(shader, texture);
 	endGameP1.SetMaterial(material);
 	Sprite::AddToMap(&endGameP1);
 
 	endGameP2 = Sprite(glm::vec3(0, h / 3 * 2, LAYER_UI_BOTTOM), glm::vec2(w, h / 3), topLeftPivot);
-	texture = TextureDatabase::GetInstance().GetTexture("../sprites/p2->tga");
+	texture = TextureDatabase::GetInstance().GetTexture("../sprites/P2.tga");
 	material = new Material(shader, texture);
 	endGameP2.SetMaterial(material);
 	Sprite::AddToMap(&endGameP2);

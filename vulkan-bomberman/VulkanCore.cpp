@@ -10,6 +10,7 @@
 #include "FileUtils.h"
 #include "Sprite.h"
 #include "Vertex.h"
+#include "Say.h"
 
 VulkanRenderer::VulkanRenderer(GLFWwindow* window)
 {
@@ -813,15 +814,15 @@ void VulkanRenderer::CreateDescriptorPool()
 {
 	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
+	poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2000);
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 20);
+	poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size() * 2000);
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 20);
+	poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size() * 2000);
 
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 	{
@@ -1264,6 +1265,7 @@ void VulkanRenderer::CreateTextureImage(const char* path, VkImage* image, VkDevi
 
 	if (!pixels)
 	{
+		Say::LogError("Couldn't load texture", path);
 		throw std::runtime_error("failed to load texture image!");
 	}
 
@@ -1510,6 +1512,7 @@ void VulkanRenderer::CreateDescriptorSets(VkImageView* image, VkSampler* sampler
 	VkResult result = vkAllocateDescriptorSets(device, &allocInfo, ds.data());
 	if (result != VK_SUCCESS)
 	{
+		Say::LogError("Failed to allocate descriptor sets", result);
 		throw std::runtime_error("failed to allocate descriptor sets!");
 	}
 
