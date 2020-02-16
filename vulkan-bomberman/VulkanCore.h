@@ -197,4 +197,3 @@ std::vector<char> readFile(const std::string& filename);
 VkShaderModule createShaderModule(const std::vector<char>& code);
 void createDescriptorSets(VkImageView * image, VkSampler * sampler, int& index);
 void UpdateDescriptorSets(std::vector<VkDescriptorSet>* descriptorSets, VkImageView* image, VkSampler* sampler);
-void createDescriptorPool();
