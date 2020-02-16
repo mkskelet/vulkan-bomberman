@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <type_traits>
 
 class Say
 {
@@ -11,6 +12,12 @@ private:
     };
 
 public:
+    template <typename... Types>
+    static void Log(bool var, Types... vars)
+    {
+        Log(var ? "true" : "false", vars...);
+    };
+
     template <typename T, typename... Types>
     static void Log(T var, Types... vars)
     {
