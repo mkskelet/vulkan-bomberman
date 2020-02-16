@@ -97,6 +97,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	}
 }
 
+static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
+{
+	auto app = reinterpret_cast<VulkanApp*>(glfwGetWindowUserPointer(window));
+	app->GetRenderer()->framebufferResized = true;
+}
+
 void VulkanApp::Run()
 {
 	InitWindow();
@@ -114,12 +120,6 @@ void VulkanApp::InitWindow()
 	window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
 	glfwSetWindowUserPointer(window, this);
 	glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-}
-
-static void framebufferResizeCallback(GLFWwindow* window, int width, int height)
-{
-	auto app = reinterpret_cast<VulkanApp*>(glfwGetWindowUserPointer(window));
-	app->GetRenderer()->framebufferResized = true;
 }
 
 void VulkanApp::InitVulkan()

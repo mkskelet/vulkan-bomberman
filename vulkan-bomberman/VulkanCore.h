@@ -12,12 +12,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
-#include "Vertex.h"
 #include <array>
 #include <cstdlib>
 #include <optional>
-#include "Material.h"
-#include "Sprite.h"
+#include <map>
+
+struct Vertex;
+class Sprite;
+class Material;
 
 struct UniformBufferObject
 {
@@ -51,6 +53,14 @@ struct SwapChainSupportDetails
 class VulkanRenderer
 {
 private:
+#ifdef NDEBUG
+	const bool enableValidationLayers = false;
+#else
+	const bool enableValidationLayers = true;
+#endif
+
+	const int MAX_FRAMES_IN_FLIGHT = 2;
+
 	// DEBUG
 	VkDebugUtilsMessengerEXT debugMessenger;
 

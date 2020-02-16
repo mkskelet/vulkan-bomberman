@@ -16,4 +16,3 @@ public:
 	int GetDescriptorSetIndex() const { return descriptorSetIndex; }
 	Texture* GetTexture() const { return texture; }
 };
-

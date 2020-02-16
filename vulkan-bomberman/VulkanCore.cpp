@@ -8,6 +8,8 @@
 #include <chrono>
 #include "Shader.h"
 #include "FileUtils.h"
+#include "Sprite.h"
+#include "Vertex.h"
 
 VulkanRenderer::VulkanRenderer(GLFWwindow* window)
 {
@@ -49,14 +51,6 @@ VulkanRenderer::~VulkanRenderer()
 const std::vector<const char*> validationLayers = {
 "VK_LAYER_KHRONOS_validation"
 };
-
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
-
-const int MAX_FRAMES_IN_FLIGHT = 2;
 
 void VulkanRenderer::InitVulkan()
 {
@@ -545,35 +539,6 @@ void VulkanRenderer::CreateSwapChain()
 	swapChainExtent = extent;
 }
 
-SwapChainSupportDetails VulkanRenderer::QuerySwapChainSupport(VkPhysicalDevice device)
-{
-	SwapChainSupportDetails details;
-
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
-
-	// get supported formats
-	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-
-	if (formatCount != 0)
-	{
-		details.formats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
-	}
-
-	// get supported presentation modes
-	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-
-	if (presentModeCount != 0)
-	{
-		details.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
-	}
-
-	return details;
-}
-
 VkSurfaceFormatKHR VulkanRenderer::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 {
 	for (const auto& availableFormat : availableFormats)
@@ -1053,7 +1018,7 @@ void VulkanRenderer::FillIndexBuffer()
 			continue;
 		}
 
-		int index = indices.size();
+		int index = static_cast<int>(indices.size());
 		bool renderedAny = false;
 
 		for (auto const& it : sprites)
@@ -1088,7 +1053,7 @@ bool VulkanRenderer::RenderSprite(Sprite* sprite)
 	float tilingY1 = tiling.y >= 0 ? 0.0f : abs(tiling.y);
 	float tilingY2 = tiling.y >= 0 ? tiling.y : 0.0f;
 
-	int firstIndex = vertices.size();
+	int firstIndex = static_cast<int>(vertices.size());
 
 	vertices.push_back({ { position.x - (pivot.x * absScaleX), position.y - (pivot.y * absScaleY), position.z}, { color.r, color.g, color.b }, { tilingX1, tilingY1 } });
 	vertices.push_back({ { position.x - (pivot.x * absScaleX) + absScaleX, position.y - (pivot.y * absScaleY), position.z}, { color.r, color.g, color.b }, { tilingX2, tilingY1 } });
@@ -1385,8 +1350,8 @@ void VulkanRenderer::CreateGraphicsPipeline(int& index, const char* vertexShader
 	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
 	// vertex input
-	auto bindingDescription = Vertex::getBindingDescription();
-	auto attributeDescriptions = Vertex::getAttributeDescriptions();
+	auto bindingDescription = Vertex::GetBindingDescription();
+	auto attributeDescriptions = Vertex::GetAttributeDescriptions();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -1515,7 +1480,7 @@ void VulkanRenderer::CreateGraphicsPipeline(int& index, const char* vertexShader
 
 	// add to list
 	graphicsPipelines.push_back({});
-	index = graphicsPipelines.size() - 1;
+	index = static_cast<int>(graphicsPipelines.size()) - 1;
 	std::cout << "shader index " << index << std::endl;
 
 	VkResult r = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipelines[index]);
@@ -1531,7 +1496,7 @@ void VulkanRenderer::CreateGraphicsPipeline(int& index, const char* vertexShader
 
 void VulkanRenderer::CreateDescriptorSets(VkImageView* image, VkSampler* sampler, int& index)
 {
-	int i = descriptorSets.size();
+	int i = static_cast<int>(descriptorSets.size());
 	std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
