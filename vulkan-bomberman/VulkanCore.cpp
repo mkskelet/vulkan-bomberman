@@ -879,6 +879,8 @@ void VulkanRenderer::RecreateSwapChain()
 
 void VulkanRenderer::Render()
 {
+	vkDeviceWaitIdle(GetDevice()); // FIXME
+
 	// free memory
 	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 	vkDestroyBuffer(device, indexBuffer, nullptr);
@@ -1013,7 +1015,7 @@ void VulkanRenderer::FillIndexBuffer()
 
 	for (auto const& [mat, sprites] : Sprite::GetSpriteMap())
 	{
-		if (mat == nullptr || mat->GetTexture())
+		if (mat == nullptr || mat->GetTexture() == nullptr)
 		{
 			continue;
 		}
@@ -1481,7 +1483,6 @@ void VulkanRenderer::CreateGraphicsPipeline(int& index, const char* vertexShader
 	// add to list
 	graphicsPipelines.push_back({});
 	index = static_cast<int>(graphicsPipelines.size()) - 1;
-	std::cout << "shader index " << index << std::endl;
 
 	VkResult r = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipelines[index]);
 	if (r != VK_SUCCESS)
@@ -1504,9 +1505,9 @@ void VulkanRenderer::CreateDescriptorSets(VkImageView* image, VkSampler* sampler
 	allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
 	allocInfo.pSetLayouts = layouts.data();
 
-	std::vector<VkDescriptorSet>* ds = {};
-	ds->resize(swapChainImages.size());
-	VkResult result = vkAllocateDescriptorSets(device, &allocInfo, ds->data());
+	std::vector<VkDescriptorSet> ds = {};
+	ds.resize(swapChainImages.size());
+	VkResult result = vkAllocateDescriptorSets(device, &allocInfo, ds.data());
 	if (result != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate descriptor sets!");
@@ -1514,10 +1515,10 @@ void VulkanRenderer::CreateDescriptorSets(VkImageView* image, VkSampler* sampler
 
 	if (image != nullptr && sampler != nullptr)
 	{
-		UpdateDescriptorSets(ds, image, sampler);
+		UpdateDescriptorSets(&ds, image, sampler);
 	}
 
-	descriptorSets.push_back(*ds);
+	descriptorSets.push_back(ds);
 	index = i;
 }
 

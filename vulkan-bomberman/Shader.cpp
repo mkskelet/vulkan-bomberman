@@ -5,7 +5,7 @@
 
 std::map<const char*, Shader*> Shader::shaderMap = {};
 
-Shader::Shader(const char* name, const char* fragmentShaderPath, const char* vertexShaderPath)
+Shader::Shader(const char* name, const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	this->name = name;
 	this->fragmentShader = fragmentShaderPath;
