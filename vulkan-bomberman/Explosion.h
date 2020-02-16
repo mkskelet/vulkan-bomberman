@@ -8,7 +8,7 @@
 class Explosion : public Sprite
 {
 private:
-	long timeToDisappear;
+	float timeToDisappear;
 public:
 	Explosion();
 	bool GetDisappear() const;

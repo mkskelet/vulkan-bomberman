@@ -36,7 +36,6 @@ public:
 	Material* GetMaterial() const { return material; }
 	void SetVisible(bool visible) { this->visible = visible; }
 	bool IsVisible() { return visible; }
-	void Render();			///< Method used to render a sprite.
 	void Start();			///< Method called after constructing the object.
 	void Update();			///< Method called every frame.
 

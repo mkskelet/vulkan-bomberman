@@ -100,12 +100,6 @@ void Player::Update()
 	__super::Update();
 }
 
-void Player::Render()
-{
-	if (alive)
-		Character::Render();
-}
-
 void Player::KeyPress(unsigned char key)
 {
 	if (!loaded) return;

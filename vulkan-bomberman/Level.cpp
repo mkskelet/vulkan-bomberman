@@ -125,7 +125,7 @@ void Level::Update()
 	if ((map.GetSinglePlayer() && !p2->IsAlive()) || timeRemaining <= 0)
 	{
 		// fail screen
-		endGame.Render();
+		endGame.SetVisible(true);
 	}
 	else if (map.GetSinglePlayer() && p2->IsAlive() && playerWon)
 	{
@@ -134,13 +134,13 @@ void Level::Update()
 	else if (!map.GetSinglePlayer())
 	{
 		if (!p1->IsAlive() && !p2->IsAlive())
-			endGameD.Render();
+			endGameD.SetVisible(true);
 		else if (!p2->IsAlive())
 			endGameP1.SetVisible(true);
 		else if (!p1->IsAlive())
 			endGameP2.SetVisible(true);
 		else if (timeRemaining <= 0)
-			endGameD.Render();
+			endGameD.SetVisible(true);
 	}
 }
 
@@ -620,24 +620,28 @@ void Level::GenerateLevel()
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/GG.tga");
 	material = new Material(shader, texture);
 	endGame.SetMaterial(material);
+	endGame.SetVisible(false);
 	Sprite::AddToMap(&endGame);
 
 	endGameP1 = Sprite(glm::vec3(0, h / 3 * 2, LAYER_UI_BOTTOM), glm::vec2(w, h / 3), topLeftPivot);
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/P1.tga");
 	material = new Material(shader, texture);
 	endGameP1.SetMaterial(material);
+	endGameP1.SetVisible(false);
 	Sprite::AddToMap(&endGameP1);
 
 	endGameP2 = Sprite(glm::vec3(0, h / 3 * 2, LAYER_UI_BOTTOM), glm::vec2(w, h / 3), topLeftPivot);
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/P2.tga");
 	material = new Material(shader, texture);
 	endGameP2.SetMaterial(material);
+	endGameP2.SetVisible(false);
 	Sprite::AddToMap(&endGameP2);
 
 	endGameD = Sprite(glm::vec3(0, h / 3 * 2, LAYER_UI_BOTTOM), glm::vec2(w, h / 3), topLeftPivot);
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/DRAW.tga");
 	material = new Material(shader, texture);
 	endGameD.SetMaterial(material);
+	endGameD.SetVisible(false);
 	Sprite::AddToMap(&endGameD);
 
 	// clear map

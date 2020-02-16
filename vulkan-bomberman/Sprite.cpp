@@ -77,10 +77,6 @@ void Sprite::RemoveFromMap(Sprite* sprite)
 	}
 }
 
-void Sprite::Render() {
-
-}
-
 void Sprite::Start() {
 
 }

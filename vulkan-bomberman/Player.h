@@ -30,7 +30,6 @@ public:
 	~Player();
 	Player(int playerNumber, CharacterType characterType, float speed, float collisionDetectionRange, glm::vec3 position, glm::vec2 size, glm::vec2 pivot, Material* material);
 	void Start();
-	void Render();
 	void Update();
 	void KeyPress(unsigned char key);
 	void SpecialKeyPress(int key);

@@ -9,7 +9,7 @@ class Bomb : public Sprite
 {
 private:
 	int range;				///< Range of bomb explosion.
-	long explosionTime;			///< Time when bomb explodes.
+	float explosionTime;			///< Time when bomb explodes.
 	bool remoteFireEnabled;		///< Is remote fire enabled?
 	bool fire;					///< Signal to explode.
 public:
