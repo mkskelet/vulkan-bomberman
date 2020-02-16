@@ -63,7 +63,7 @@ void VulkanRenderer::InitVulkan()
 	CreateRenderPass();
 	CreateDescriptorSetLayout();
 
-	Shader uberShader = Shader("uber", "../shaders/vert.spv", "../shaders/frag.spv"); // TEMP
+	Shader* uberShader = new Shader("uber", "../shaders/vert.spv", "../shaders/frag.spv"); // TEMP
 
 	CreateCommandPool();
 	CreateColorResources();

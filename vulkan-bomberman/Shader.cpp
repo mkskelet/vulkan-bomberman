@@ -2,6 +2,7 @@
 #include "VulkanCore.h"
 #include <iostream>
 #include "VulkanApp.h"
+#include "Say.h"
 
 std::map<const char*, Shader*> Shader::shaderMap = {};
 
@@ -13,12 +14,14 @@ Shader::Shader(const char* name, const char* vertexShaderPath, const char* fragm
 
 	VulkanApp::GetRenderer()->CreateGraphicsPipeline(shaderIndex, vertexShaderPath, fragmentShaderPath);
 
-	std::cout << "shader index " << shaderIndex << std::endl;
+	Say::Log("Add shader", name, shaderIndex);
 	shaderMap[name] = this;
 }
 
 Shader::~Shader()
 {
+	Say::Log("Delete shader", name);
+
 	// TODO mark graphic pipeline to be destroyed
 
 	shaderMap.erase(name);

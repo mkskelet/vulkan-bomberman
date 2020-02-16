@@ -4,12 +4,13 @@
 
 class Say
 {
-public:
+private:
     static void Log()
     {
         std::cout << std::endl;
     };
 
+public:
     template <typename T, typename... Types>
     static void Log(T var, Types... vars)
     {
