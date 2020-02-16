@@ -758,10 +758,10 @@ void Level::GenerateLevel()
 	}
 }
 
-void Level::KeyPress(unsigned char key)
+void Level::KeyPress(int key)
 {
 	// escape to exit to main menu
-	if (key == 27)
+	if (key == GLFW_KEY_ESCAPE)
 	{
 		SwitchScene(SCENE_MAIN_MENU);
 	}

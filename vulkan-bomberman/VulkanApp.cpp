@@ -96,6 +96,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 		ProcessDebugCommands(key);
 	}
+	else if (scene != nullptr && action == GLFW_RELEASE)
+	{
+		scene->KeyRelease(key);
+	}
 }
 
 static void framebufferResizeCallback(GLFWwindow* window, int width, int height)

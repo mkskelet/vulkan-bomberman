@@ -52,7 +52,7 @@ public:
 	void Update();
 	void Start();
 	void GenerateLevel();
-	void KeyPress(unsigned char key);
+	void KeyPress(int key);
 	void SpecialKeyPress(int key);
 	void SpecialKeyRelease(int key);
 	void KeyRelease(int key);
