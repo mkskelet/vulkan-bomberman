@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Say.h"
 #include "PlayerPrefs.h"
+#include "Level.h"
 
 //block texture IDs
 #define PREVIEW_BLOCK_BACKGROUND 0
@@ -237,9 +238,9 @@ void MainMenu::KeyPress(int key)
 			if (!showMainMenu && mapLoader.GetMapList(singlePlayer).size() > previewMapIndex)
 			{
 				// load level
-				//Level::levelName = mapLoader.LoadMap(mapLoader.GetMapList(singlePlayer)[previewMapIndex]).GetName();
+				Level::levelName = mapLoader.LoadMap(mapLoader.GetMapList(singlePlayer)[previewMapIndex]).GetName();
 				//Map m = mapLoader.LoadMap(Level::levelName);
-				//SwitchScene(SCENE_LEVEL);
+				SwitchScene(SCENE_LEVEL);
 				Say::Log("Load level");
 			}
 

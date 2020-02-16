@@ -12,6 +12,7 @@
 #include "Scene.h"
 #include "SplashScreen.h"
 #include "MainMenu.h"
+#include "Level.h"
 #include "TextureDatabase.h"
 
 const int WIDTH = 800;
@@ -166,6 +167,10 @@ void VulkanApp::MainLoop()
 			{
 			case SCENE_MAIN_MENU:
 				scene = new MainMenu();
+				scene->Start();
+				break;
+			case SCENE_LEVEL:
+				scene = new Level();
 				scene->Start();
 				break;
 			default:
