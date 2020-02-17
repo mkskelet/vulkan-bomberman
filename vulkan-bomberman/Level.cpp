@@ -603,13 +603,14 @@ void Level::GenerateLevel()
 {
 	float w = 1.0f;
 	float h = 1.0f;
+	float topPanelOffset = 0.05f;
 
-	glm::vec2 topLeftPivot(0.f, 1.f);
+	glm::vec2 topLeftPivot(0.f, 0.f);
 	Shader* shader = Shader::Find("uber");
 	Texture* texture;
 	Material* material;
 
-	topBar = Sprite(glm::vec3(0, h, LAYER_UI_BOTTOM), glm::vec2(w, 0.05f), topLeftPivot);
+	topBar = Sprite(glm::vec3(0, 0, LAYER_UI_BOTTOM), glm::vec2(w, topPanelOffset), topLeftPivot);
 	topBar.SetColor(0.2f, 0.2f, 0.2f);
 	texture = TextureDatabase::GetInstance().GetTexture("../sprites/menu/screen.tga");
 	material = new Material(shader, texture);
@@ -649,7 +650,7 @@ void Level::GenerateLevel()
 	solidBlocks.clear();
 	//otherBlocks.clear();
 
-	glm::vec2 boundaries(w, h - 25);
+	glm::vec2 boundaries(w, h - topPanelOffset);
 
 	float xCount = map.GetX();
 	float yCount = map.GetY();
@@ -697,13 +698,19 @@ void Level::GenerateLevel()
 				{
 					if (!map.GetSinglePlayer())
 					{
-						p1 = new Player(PLAYER_ONE, PlayerCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, boundaries.y - i * blockSize - yOffset - blockSize / 8, LAYER_GAME_TOP),
+						texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Bman_F_f00.tga");
+						material = new Material(shader, texture);
+						p1 = new Player(PLAYER_ONE, PlayerCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, 1 - (boundaries.y - i * blockSize - yOffset - blockSize / 8), LAYER_GAME_TOP),
 							glm::vec2(blockSize * 6 / 8, blockSize * 6 / 8), topLeftPivot, material);
+						p1->SetColor(0.1f, 0.8f, 0.2f);
 						p1->Start();
 					}
 					break;
 				}
-				p2 = new Player(PLAYER_TWO, PlayerCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, boundaries.y - i * blockSize - yOffset - blockSize / 8, LAYER_GAME_TOP),
+
+				texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Bman_F_f00.tga");
+				material = new Material(shader, texture);
+				p2 = new Player(PLAYER_TWO, PlayerCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, 1 - (boundaries.y - i * blockSize - yOffset - blockSize / 8), LAYER_GAME_TOP),
 					glm::vec2(blockSize * 6 / 8, blockSize * 6 / 8), topLeftPivot, material);
 				p2->Start();
 				drawNothing = true;
@@ -711,9 +718,11 @@ void Level::GenerateLevel()
 				break;
 			default:
 				drawNothing = true;
+				texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/Creep_F_f00.tga");
+				material = new Material(shader, texture);
 				if (b >= 0 && b <= 9)
 				{
-					Enemy* e = new Enemy(EnemyCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, boundaries.y - i * blockSize - yOffset - blockSize / 8, LAYER_GAME_TOP),
+					Enemy* e = new Enemy(EnemyCharacter, blockSize / 15, 5, glm::vec3(xOffset + j * blockSize + blockSize / 8, 1 - (boundaries.y - i * blockSize - yOffset - blockSize / 8), LAYER_GAME_TOP),
 						glm::vec2(blockSize * 6 / 8, blockSize * 6 / 8), topLeftPivot, material);
 					e->Start();
 
@@ -722,20 +731,10 @@ void Level::GenerateLevel()
 				break;
 			}
 
-			// draw background
-			Sprite* bkg = new Sprite(
-				glm::vec3(xOffset + j * blockSize, boundaries.y - i * blockSize - yOffset, LAYER_GAME_BACKGROUND),
-				glm::vec2(blockSize, blockSize),
-				topLeftPivot
-			);
-			bkg->SetMaterial(material);
-			Sprite::AddToMap(bkg);
-			backgroundBlocks.push_back(bkg);
-
 			if (drawStatic && !drawNothing)
 			{
 				Sprite* solid = new Sprite(
-					glm::vec3(xOffset + j * blockSize, boundaries.y - i * blockSize - yOffset, LAYER_GAME_TOP),
+					glm::vec3(xOffset + j * blockSize, 1 - (boundaries.y - i * blockSize - yOffset), LAYER_GAME_TOP),
 					glm::vec2(blockSize, blockSize),
 					topLeftPivot
 				);
@@ -743,6 +742,18 @@ void Level::GenerateLevel()
 				Sprite::AddToMap(solid);
 				solidBlocks.push_back(solid);
 			}
+
+			// draw background
+			texture = TextureDatabase::GetInstance().GetTexture("../sprites/blocks/BackgroundTile.tga");
+			material = new Material(shader, texture);
+			Sprite* bkg = new Sprite(
+				glm::vec3(xOffset + j * blockSize, 1 - (boundaries.y - i * blockSize - yOffset), LAYER_GAME_BACKGROUND),
+				glm::vec2(blockSize, blockSize),
+				topLeftPivot
+			);
+			bkg->SetMaterial(material);
+			Sprite::AddToMap(bkg);
+			backgroundBlocks.push_back(bkg);
 
 			/*if (!drawStatic)
 			{

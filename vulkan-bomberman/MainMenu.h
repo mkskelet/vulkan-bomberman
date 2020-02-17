@@ -47,6 +47,7 @@ private:
 
 public:
 	MainMenu();
+	~MainMenu();
 	std::string GetMapName() { return mapName; }	///< Method returns name of the map selected by player.
 	void Update();
 	void KeyPress(int key);

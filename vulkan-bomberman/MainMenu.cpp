@@ -126,6 +126,11 @@ mapName("")
 	materials[PREVIEW_BLOCK_PORTAL] = material;
 }
 
+MainMenu::~MainMenu()
+{
+	ClearMapPreview();
+}
+
 /// Method called when scene is created. 
 void MainMenu::Start()
 {
